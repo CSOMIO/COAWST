@@ -93,7 +93,7 @@ GridsInLayer =  1
 
           Lm == 218           ! Number of I-direction INTERIOR RHO-points
           Mm == 6             ! Number of J-direction INTERIOR RHO-points
-           N == 11            ! Number of vertical levels
+           N == 10            ! Number of vertical levels
           ND == 1             ! Number of wave directional bins
 
         Nbed =  1             ! Number of sediment bed layers
@@ -213,11 +213,8 @@ ad_VolCons(north) ==  F                            ! northern boundary
 
 ! Time-Stepping parameters.
 
-      NTIMES == 36000  ! 1 hr
-!     NTIMES == 64800  ! 18 hr
-          DT == 0.1d0
-!      NTIMES == 360000
-!          DT == 0.01d0
+      NTIMES == 18000  ! 1 hr
+          DT == 0.2d0
      NDTFAST == 20
 
 ! Model iteration loops parameters.
@@ -247,10 +244,8 @@ ad_VolCons(north) ==  F                            ! northern boundary
 ! Output history, quicksave, average, and diagnostic files parameters.
 
      LDEFOUT == T
-        NHIS == 100
-     NDEFHIS == 36000
-!       NHIS == 300
-!    NDEFHIS == 64800
+        NHIS == 50
+     NDEFHIS == 18000
         NQCK == 0
      NDEFQCK == 0
       NTSAVG == 1
@@ -294,9 +289,7 @@ ad_VolCons(north) ==  F                            ! northern boundary
 ! Harmonic/biharmonic, horizontal viscosity coefficient for nonlinear model
 ! and adjoint-based algorithms: [Ngrids].
 
-!      VISC2 == 0.00                           ! m2/s
-       VISC2 == 0.25d0                           ! m2/s
-!      VISC2 == 0.50d0                           ! m2/s
+       VISC2 == 0.50d0                           ! m2/s
        VISC4 == 0.0d0                           ! m4/s
 
     ad_VISC2 == 0.0d0                           ! m2/s
@@ -360,9 +353,8 @@ LtracerSponge == F F                            ! temperature, salinity, inert
   CHARNOK_ALPHA == 1400.0d0         ! Charnok surface roughness
  ZOS_HSIG_ALPHA == 0.5d0            ! roughness from wave amplitude
        SZ_ALPHA == 0.25d0           ! roughness from wave dissipation
-       CRGBAN_CW == 100.0d0          ! Craig and Banner wave breaking
-       WEC_ALPHA == 0.5d0            ! 0: all wave dissip goes to break and none to roller.
- !     WEC_ALPHA == 0.0d0            ! 0: all wave dissip goes to break and none to roller.
+       CRGBAN_CW == 100.0d0         ! Craig and Banner wave breaking
+       WEC_ALPHA == 1.0d0           ! 0: all wave dissip goes to break and none to roller.
                                     ! 1: all wave dissip goes to roller and none to breaking.
 
 ! Constants used in momentum stress computation.
@@ -381,7 +373,6 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 ! Minimum depth for wetting and drying.
 
         DCRIT == 0.10d0                     ! m
-!       DCRIT == 0.010d0                     ! m
 
 ! Various parameters.
 
@@ -392,13 +383,13 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 ! Set vertical, terrain-following coordinates transformation equation and
 ! stretching function (see below for details), [1:Ngrids].
 
-  Vtransform == 1                          ! transformation equation
- Vstretching == 1                          ! stretching function
+  Vtransform == 2                          ! transformation equation
+ Vstretching == 4                          ! stretching function
 
 ! Vertical S-coordinates parameters (see below for details), [1:Ngrids].
 
      THETA_S == 0.0d0                      ! surface stretching parameter
-     THETA_B == 0.0d0                      ! bottom  stretching parameter
+     THETA_B == 2.0d0                      ! bottom  stretching parameter
       TCLINE == 0.0d0                      ! critical depth (m)
 
 ! Mean Density and Brunt-Vaisala frequency.
@@ -535,19 +526,19 @@ SO_sdev(isTsur) == 1.0d0 1.0d0             ! NT surface tracers flux
 ! HISTORY output file.
 
 Hout(idUvel) == T       ! u                  3D U-velocity
-Hout(idVvel) == T       ! v                  3D V-velocity
+Hout(idVvel) == F       ! v                  3D V-velocity
 Hout(idu3dE) == F       ! u_eastward         3D U-eastward  at RHO-points
 Hout(idv3dN) == F       ! v_northward        3D V-northward at RHO-points
 Hout(idWvel) == F       ! w                  3D W-velocity
 Hout(idOvel) == F       ! omega              omega vertical velocity
 Hout(idUbar) == T       ! ubar               2D U-velocity
-Hout(idVbar) == T       ! vbar               2D V-velocity
+Hout(idVbar) == F       ! vbar               2D V-velocity
 Hout(idu2dE) == F       ! ubar_eastward      2D U-eastward  at RHO-points
 Hout(idv2dN) == F       ! vbar_northward     2D V-northward at RHO-points
 Hout(idFsur) == T       ! zeta               free-surface
 Hout(idBath) == T       ! bath               time-dependent bathymetry
 
-Hout(idTvar) == T T     ! temp, salt         temperature and salinity
+Hout(idTvar) == F F     ! temp, salt         temperature and salinity
 Hout(idpthR) == F       ! z_rho              time-varying depths of RHO-points
 Hout(idpthU) == F       ! z_u                time-varying depths of U-points
 Hout(idpthV) == F       ! z_v                time-varying depths of V-points
@@ -563,15 +554,15 @@ Hout(idUbms) == F       ! bustr              bottom U-stress
 Hout(idVbms) == F       ! bvstr              bottom V-stress
 
 Hout(idUbrs) == T       ! bustrc             bottom U-current stress
-Hout(idVbrs) == T       ! bvstrc             bottom V-current stress
+Hout(idVbrs) == F       ! bvstrc             bottom V-current stress
 Hout(idUbws) == T       ! bustrw             bottom U-wave stress
-Hout(idVbws) == T       ! bvstrw             bottom V-wave stress
+Hout(idVbws) == F       ! bvstrw             bottom V-wave stress
 Hout(idUbcs) == T       ! bustrcwmax         bottom max wave-current U-stress
-Hout(idVbcs) == T       ! bvstrcwmax         bottom max wave-current V-stress
-Hout(idUVwc) == T       ! bstrcwmax          bottom max wave-current stress magnitude
+Hout(idVbcs) == F       ! bvstrcwmax         bottom max wave-current V-stress
+Hout(idUVwc) == F       ! bstrcwmax          bottom max wave-current stress magnitude
 
 Hout(idUbot) == T       ! Ubot               bed wave orbital U-velocity
-Hout(idVbot) == T       ! Vbot               bed wave orbital V-velocity
+Hout(idVbot) == F       ! Vbot               bed wave orbital V-velocity
 Hout(idUbur) == F       ! Ur                 bottom U-velocity above bed
 Hout(idVbvr) == F       ! Vr                 bottom V-velocity above bed
 
@@ -584,13 +575,13 @@ Hout(idW3yy) == T       ! Syy                WEC_Mellor 3D Syy radiation stress
 Hout(idW3zx) == T       ! Szx                WEC_Mellor 3D Szx radiation stress
 Hout(idW3zy) == T       ! Szy                WEC_Mellor 3D Szy radiation stress
 
-Hout(idWztw) == T       ! zetaw              WEC_VF quasi-static sea level adjustment
-Hout(idWqsp) == T       ! qsp                WEC_VF quasi-static pressure
-Hout(idWbeh) == T       ! bh                 WEC_VF Bernoulli head
+Hout(idWztw) == F       ! zetaw              WEC_VF quasi-static sea level adjustment
+Hout(idWqsp) == F       ! qsp                WEC_VF quasi-static pressure
+Hout(idWbeh) == F       ! bh                 WEC_VF Bernoulli head
 
 Hout(idACen) == T       ! AC                 3D wave action
 Hout(idACcx) == T       ! Cx                 2D Group velocity in xi dimension
-Hout(idACcy) == T       ! Cy                 2D Group velocity in etai dimension
+Hout(idACcy) == F       ! Cy                 2D Group velocity in etai dimension
 Hout(idACct) == T       ! Ct                 2D Group velocity in the directional dimension
 Hout(idACtp) == T       ! Tp                 2D Group peak period
 
@@ -600,9 +591,9 @@ Hout(idU3rs) == F       ! u_Rstress          WEC 3D U-stress
 Hout(idV3rs) == F       ! v_Rstress          WEC 3D V-stress
 
 Hout(idU2Sd) == T       ! ubar_stokes        2D U-Stokes velocity
-Hout(idV2Sd) == T       ! vbar_stokes        2D V-Stokes velocity
+Hout(idV2Sd) == F       ! vbar_stokes        2D V-Stokes velocity
 Hout(idU3Sd) == T       ! u_stokes           3D U-Stokes velocity
-Hout(idV3Sd) == T       ! v_stokes           3D V-Stokes velocity
+Hout(idV3Sd) == F       ! v_stokes           3D V-Stokes velocity
 Hout(idW3Sd) == F       ! omega_stokes       3D Omega-Stokes velocity
 Hout(idW3St) == F       ! w_stokes           3D W-Stokes velocity
 Hout(idWamp) == T       ! Hwave              wave height
@@ -617,7 +608,7 @@ Hout(idUwav) == F       ! uWave              wave-depth avgeraged U-velocity
 Hout(idVwav) == F       ! vWave              wave-depth avgeraged V-velocity
 Hout(idWdif) == T       ! Dissip_fric        wave dissipation due to bottom friction
 Hout(idWdib) == T       ! Dissip_break       wave dissipation due to breaking
-Hout(idWdiw) == T       ! Dissip_wcap        wave dissipation due to white capping
+Hout(idWdiw) == F       ! Dissip_wcap        wave dissipation due to white capping
 Hout(idWdis) == T       ! Dissip_roller      wave roller dissipation
 Hout(idWrol) == T       ! rollA              wave roller action density
 
