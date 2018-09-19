@@ -74,7 +74,7 @@
      &    DOMAIN(ng)%Northern_Edge(tile)) THEN
         cff=-1.0_r8*sin(2.0_r8*pi*time(ng)/(12.0_r8*3600.0_r8))
         DO i=IstrR,IendR
-          cff=cff+WAVES(ng)%bndwave(i,tidx)
+!         cff=cff+WAVES(ng)%bndwave(tidx)
           BOUNDARY(ng)%zeta_north(i)=cff
         END DO
       END IF
