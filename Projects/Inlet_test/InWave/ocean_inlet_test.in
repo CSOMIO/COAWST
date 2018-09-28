@@ -146,7 +146,7 @@ GridsInLayer =  1
 !
 !                   1       2       3       4
 
-   LBC(isFsur) ==   Gra     Clo     Gra     Gra         ! free-surface
+   LBC(isFsur) ==   Gra     Clo     Gra     Cla         ! free-surface
    LBC(isUbar) ==   Gra     Clo     Gra     Red         ! 2D U-momentum
    LBC(isVbar) ==   Gra     Clo     Gra     Red         ! 2D V-momentum
    LBC(isUvel) ==   Gra     Clo     Gra     Red         ! 3D U-momentum
