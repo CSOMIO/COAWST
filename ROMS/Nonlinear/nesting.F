@@ -1290,10 +1290,15 @@
 !
 !  Linear interpolation weights.
 !
-              MaskLWsum=GRID(dg)%rmask_full(Idg  ,Jdg  )+               &
-     &                  GRID(dg)%rmask_full(Idgp1,Jdg  )+               &
-     &                  GRID(dg)%rmask_full(Idgp1,Jdgp1)+               &
-     &                  GRID(dg)%rmask_full(Idg  ,Jdgp1)
+!
+!             MaskLWsum=GRID(dg)%rmask_full(Idg  ,Jdg  )+               &
+!    &                  GRID(dg)%rmask_full(Idgp1,Jdg  )+               &
+!    &                  GRID(dg)%rmask_full(Idgp1,Jdgp1)+               &
+!    &                  GRID(dg)%rmask_full(Idg  ,Jdgp1)
+              MaskLWsum=GRID(dg)%rmask(Idg  ,Jdg  )+               &
+     &                  GRID(dg)%rmask(Idgp1,Jdg  )+               &
+     &                  GRID(dg)%rmask(Idgp1,Jdgp1)+               &
+     &                  GRID(dg)%rmask(Idg  ,Jdgp1)
               IF (MaskLWsum.lt.4) THEN
 #  ifdef WET_DRY
                 Lweight(1)=Rcontact(cr)%LweightUnmasked(1,m)*           &
@@ -3556,8 +3561,10 @@
      &                          GRID(rg)%pm,                            &
      &                          GRID(rg)%pn,                            &
 #  ifdef MASKING
-     &                          GRID(dg)%rmask_full,                    &
-     &                          GRID(rg)%rmask_full,                    &
+!    &                          GRID(dg)%rmask_full,                    &
+!    &                          GRID(rg)%rmask_full,                    &
+     &                          GRID(dg)%rmask     ,                    &
+     &                          GRID(rg)%rmask ,                        &
 #  endif
      &                          COUPLING(dg)%Zt_avg1,                   &
      &                          COUPLING(rg)%Zt_avg1)
@@ -3573,8 +3580,10 @@
      &                          GRID(rg)%pm,                            &
      &                          GRID(rg)%pn,                            &
 #  ifdef MASKING
-     &                          GRID(dg)%rmask_full,                    &
-     &                          GRID(rg)%rmask_full,                    &
+!    &                          GRID(dg)%rmask_full,                    &
+!    &                          GRID(rg)%rmask_full,                    &
+     &                          GRID(dg)%rmask,                         &
+     &                          GRID(rg)%rmask,                         &
 #  endif
      &                          OCEAN(dg)%zeta(:,:,Dindex2d),           &
      &                          OCEAN(rg)%zeta(:,:,Rindex2d))
@@ -3656,8 +3665,10 @@
      &                            GRID(rg)%pm,                          &
      &                            GRID(rg)%pn,                          &
 #  ifdef MASKING
-     &                            GRID(dg)%rmask_full,                  &
-     &                            GRID(rg)%rmask_full,                  &
+!    &                            GRID(dg)%rmask_full,                  &
+!    &                            GRID(rg)%rmask_full,                  &
+     &                            GRID(dg)%rmask,                       &
+     &                            GRID(rg)%rmask,                       &
 #  endif
      &                            OCEAN(dg)%t(:,:,:,Dindex3d,itrc),     &
      &                            OCEAN(rg)%t(:,:,:,Rindex3d,itrc))

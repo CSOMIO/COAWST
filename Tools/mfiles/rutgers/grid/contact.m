@@ -756,6 +756,9 @@ if (spherical),
   
   end
 
+%jcw
+%    R.h = interp2(XrC', YrC', G(dg).h', XrF, YrF, 'nearest');
+
 else
 
   FCr.V = G(dg).angle(:);      R.angle = FCr(XrF, YrF); 
