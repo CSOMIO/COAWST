@@ -116,14 +116,14 @@ ncwrite(ncname, 'receiver_grid', int32([S.contact.receiver_grid]));
 
 % Update global type attribute.
 
-if (any(S.contact.hybrid))
-  hybrid_nesting = true;
-  type = 'ROMS Hybrid Nesting Contact Regions Data';
-  ncwriteatt(ncname, '/', 'type', type);
-  disp(['Updated global ''type'' attribute to: "', type,'".'])
-else
+%if (any(S.contact.hybrid))
+%  hybrid_nesting = true;
+%  type = 'ROMS Hybrid Nesting Contact Regions Data';
+%  ncwriteatt(ncname, '/', 'type', type);
+%  disp(['Updated global ''type'' attribute to: "', type,'".'])
+%else
   hybrid_nesting = false;
-end
+%end
 
 % Hybrid nesting or refinement grid extraction coordinates, if any.
 
