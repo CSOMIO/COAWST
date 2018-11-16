@@ -842,17 +842,17 @@
 !
 !  For the lateral shear.
 !
-            cff1=0.5_r8*(vbar(i-1,j,1)+vbar(i-1,j+1,1))
-            cff2=0.5_r8*(vbar(i,j,1)+vbar(i,j+1,1))
-            cff=(cff2-cff1)*0.5_r8*(pm(i-1,j)+pm(i,j))
-!           cff2=MAX(ABS(cff)-0.25_r8,0.0_r8)
-            cff2=MAX(ABS(cff)-0.01_r8,0.0_r8)
-!           cff2=cff2*SIGN(1.0_r8,cff)*100.0_r8
-            cff2=cff2*SIGN(1.0_r8,dzdx)*10.0_r8
+!            cff1=0.5_r8*(vbar(i-1,j,1)+vbar(i-1,j+1,1))
+!            cff2=0.5_r8*(vbar(i,j,1)+vbar(i,j+1,1))
+!            cff=(cff2-cff1)*0.5_r8*(pm(i-1,j)+pm(i,j))
+!!           cff2=MAX(ABS(cff)-0.25_r8,0.0_r8)
+!            cff2=MAX(ABS(cff)-0.01_r8,0.0_r8)
+!!           cff2=cff2*SIGN(1.0_r8,cff)*100.0_r8
+!            cff2=cff2*SIGN(1.0_r8,dzdx)*10.0_r8
 #  ifdef MASKING
-            cff2=cff2*umask(i,j)
+!            cff2=cff2*umask(i,j)
 #   ifdef WET_DRY
-            cff2=cff2*(1.0_r8-umask_wet(i,j))
+!            cff2=cff2*(1.0_r8-umask_wet(i,j))
 #   endif
 #  endif
 !            FX(i,j)=FX(i,j)+cff2
