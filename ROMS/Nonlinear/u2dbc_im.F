@@ -98,7 +98,7 @@
 
       real(r8), parameter :: eps = 1.0E-20_r8
 
-      real(r8) :: Ce, Cx, Zx
+      real(r8) :: Ce, Cx, Zx, ramp
       real(r8) :: bry_pgr, bry_cor, bry_str, bry_val
       real(r8) :: cff, cff1, cff2, cff3, dt2d, dUde, dUdt, dUdx
       real(r8) :: obc_in, obc_out, phi, tau
@@ -106,6 +106,12 @@
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: grad
 
 #include "set_bounds.h"
+
+#ifdef SANDY_INWAVE
+      ramp=TANH((tdays(ng)-dstart)/0.15_r8)
+#else
+      ramp=1.0_r8
+#endif
 !
 !-----------------------------------------------------------------------
 !  Set time-indices
