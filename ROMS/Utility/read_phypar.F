@@ -6001,7 +6001,7 @@
      &         'Hout(idWpbt)',                                          &
      &         'Write out wave bottom period.'
 #endif
-#if defined BBL_MODEL || defined WAVES_OCEAN \
+#if defined BBL_MODEL || defined WAVES_OCEAN || \
     defined BEDLOAD_SOULSBY || defined BEDLOAD_VANDERA
             IF (Hout(idWorb,ng)) WRITE (out,170) Hout(idWorb,ng),       &
      &         'Hout(idWorb)',                                          &
