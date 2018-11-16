@@ -80,26 +80,34 @@
      &                       FORCES(ng) % Dwave,                        &
      &                       FORCES(ng) % Pwave_bot,                    &
      &                       FORCES(ng) % Uwave_rms,                    &
+!     &                       FORCES(ng)    % bustr,                     &
+!     &                       FORCES(ng)    % bvstr,                     &
      &                       BBL(ng)    % bustrc,                       &
      &                       BBL(ng)    % bvstrc,                       &
      &                       BBL(ng) % Ur,                              &
      &                       BBL(ng) % Vr,                              &
      &                       GRID(ng) % angler,                         &
-# ifdef SED_DUNEFACE
-     &                       GRID(ng) % on_u,                           &
-     &                       GRID(ng) % om_v,                           &
-     &                       OCEAN(ng) % ubar,                          &
-     &                       OCEAN(ng) % vbar,                          &
-# endif
 # if defined SED_MORPH
      &                       SEDBED(ng) % bed_thick,                    &
 # endif
+     &                       SEDBED(ng) % ursell_no,                    &
+     &                       SEDBED(ng) % RR_asymwave,                  &
+     &                       SEDBED(ng) % beta_asymwave,                &
+     &                       SEDBED(ng) % ksd_wbl,                      &
+     &                       SEDBED(ng) % ustrc_wbl,                    &
+     &                       SEDBED(ng) % thck_wbl,                     &
+     &                       SEDBED(ng) % udelta_wbl,                   &
+     &                       SEDBED(ng) % fd_wbl,                       &
      &                       GRID(ng) % h,                              &
      &                       GRID(ng) % om_r,                           &
      &                       GRID(ng) % om_u,                           &
      &                       GRID(ng) % on_r,                           &
      &                       GRID(ng) % on_v,                           &
      &                       OCEAN(ng) % zeta,                          &
+     &                       SEDBED(ng) % ucrest_r,                     &
+     &                       SEDBED(ng) % utrough_r,                    &
+     &                       SEDBED(ng) % T_crest,                      &
+     &                       SEDBED(ng) % T_trough,                     &
      &                       SEDBED(ng) % bedldu,                       &
      &                       SEDBED(ng) % bedldv,                       &
      &                       SEDBED(ng) % bed,                          &
@@ -128,18 +136,21 @@
      &                             Hwave, Lwave,                        &
      &                             Dwave, Pwave_bot,                    &
      &                             Uwave_rms,                           &
+!     &                             bustr, bvstr,                        &
      &                             bustrc, bvstrc,                      &
      &                             Ur, Vr,                              &
      &                             angler,                              &
-# ifdef SED_DUNEFACE
-     &                             on_u, om_v,                          &
-     &                             ubar, vbar,                          &
-# endif
 # if defined SED_MORPH
      &                             bed_thick,                           &
 # endif
+     &                             ursell_no,                           &
+     &                             RR_asymwave, beta_asymwave,          &
+     &                             ksd_wbl, ustrc_wbl,                  &
+     &                             thck_wbl, udelta_wbl, fd_wbl,        &
      &                             h, om_r, om_u, on_r, on_v,           &
      &                             zeta,                                &
+     &                             ucrest_r, utrough_r,                 &
+     &                             T_crest, T_trough,                   &
      &                             bedldu, bedldv,                      &
      &                             bed, bed_frac, bed_mass,             &
      &                             bottom)
@@ -185,26 +196,37 @@
       real(r8), intent(in) :: Hwave(LBi:,LBj:)
       real(r8), intent(in) :: Lwave(LBi:,LBj:)
       real(r8), intent(in) :: Uwave_rms(LBi:,LBj:)
+!      real(r8), intent(in) :: bustr(LBi:,LBj:)
+!      real(r8), intent(in) :: bvstr(LBi:,LBj:)
       real(r8), intent(in) :: bustrc(LBi:,LBj:)
       real(r8), intent(in) :: bvstrc(LBi:,LBj:)
       real(r8), intent(in) :: Ur(LBi:,LBj:)
       real(r8), intent(in) :: Vr(LBi:,LBj:)
       real(r8), intent(in) :: angler(LBi:,LBj:)
-#  ifdef SED_DUNEFACE
-      real(r8), intent(in) :: on_u(LBi:,LBj:)
-      real(r8), intent(in) :: om_v(LBi:,LBj:)
-      real(r8), intent(in) :: ubar(LBi:,LBj:,:)
-      real(r8), intent(in) :: vbar(LBi:,LBj:,:)
-#  endif
 #  if defined SED_MORPH
       real(r8), intent(inout):: bed_thick(LBi:,LBj:,:)
 #  endif
+      real(r8), intent(inout) :: ursell_no(LBi:,LBj:)
+      real(r8), intent(inout) :: RR_asymwave(LBi:,LBj:)
+      real(r8), intent(inout) :: beta_asymwave(LBi:,LBj:)
+      real(r8), intent(inout) :: ksd_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: ustrc_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: thck_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: udelta_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: fd_wbl(LBi:,LBj:)
+!
       real(r8), intent(in) :: h(LBi:,LBj:)
       real(r8), intent(in) :: om_r(LBi:,LBj:)
       real(r8), intent(in) :: om_u(LBi:,LBj:)
       real(r8), intent(in) :: on_r(LBi:,LBj:)
       real(r8), intent(in) :: on_v(LBi:,LBj:)
       real(r8), intent(inout) :: zeta(LBi:,LBj:,:)
+!
+      real(r8), intent(inout) :: ucrest_r(LBi:,LBj:)
+      real(r8), intent(inout) :: utrough_r(LBi:,LBj:)
+      real(r8), intent(inout) :: T_crest(LBi:,LBj:)
+      real(r8), intent(inout) :: T_trough(LBi:,LBj:)
+!
       real(r8), intent(inout) :: bedldu(LBi:,LBj:,:)
       real(r8), intent(inout) :: bedldv(LBi:,LBj:,:)
       real(r8), intent(inout) :: bed(LBi:,LBj:,:,:)
@@ -230,29 +252,39 @@
       real(r8), intent(in) :: Hwave(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: Lwave(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: Uwave_rms(LBi:UBi,LBj:UBj)
+!      real(r8), intent(in) :: bustr(LBi:UBi,LBj:UBj)
+!      real(r8), intent(in) :: bvstr(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: bustrc(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: bvstrc(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: Ur(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: Vr(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: angler(LBi:UBi,LBj:UBj)
-#  ifdef SED_DUNEFACE
-      real(r8), intent(in) :: on_u(LBi:UBi,LBj:UBj)
-      real(r8), intent(in) :: om_v(LBi:UBi,LBj:UBj)
-      real(r8), intent(in) :: ubar(LBi:UBi,LBj:UBj)
-      real(r8), intent(in) :: vbar(LBi:UBi,LBj:UBj)
-#  endif
 #  if defined SED_MORPH
       real(r8), intent(inout):: bed_thick(LBi:UBi,LBj:UBj,2)
 #  endif
+      real(r8), intent(inout) :: ursell_no(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: RR_asymwave(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: beta_asymwave(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: ksd_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: ustrc_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: thck_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: udelta_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: fd_wbl(LBi:UBi,LBj:UBj)
+!
       real(r8), intent(in) :: h(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: om_r(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: om_u(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: on_r(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: on_v(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: zeta(LBi:UBi,LBj:UBj,3)
+!
+      real(r8), intent(inout) :: ucrest_r((LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: utrough_r(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: T_crest(LBi:UBi,LBj:UBj) 
+      real(r8), intent(inout) :: T_trough(LBi:UBi,LBj:UBj)
+!
       real(r8), intent(inout) :: bedldu(LBi:UBi,LBj:UBj,NST)
       real(r8), intent(inout) :: bedldv(LBi:UBi,LBj:UBj,NST)
-!#  endif
       real(r8), intent(inout) :: bed(LBi:UBi,LBj:UBj,Nbed,MBEDP)
       real(r8), intent(inout) :: bed_frac(LBi:UBi,LBj:UBj,Nbed,NST)
       real(r8), intent(inout) :: bed_mass(LBi:UBi,LBj:UBj,Nbed,1:2,NST)
@@ -268,12 +300,9 @@
       real(r8) :: a_slopex, a_slopey, sed_angle
       real(r8) :: bedld, bedld_mass, dzdx, dzdy
       real(r8) :: rhs_bed, Ua, Ra, Clim, phi_cw
-# ifdef SED_SLUMP
-      real(r8) :: sedslope_wet, sedslope_dry, slopefac_wet, slopefac_dry
-# endif
 !
       real(r8) :: Hs, Td, depth
-      real(r8) :: d50, d90, rhos
+      real(r8) :: d50, d50_mix, d90, rhos
       real(r8) :: urms, umag_curr, phi_curwave
       real(r8) :: y, uhat, ahat
       real(r8) :: k_wn, c_w
@@ -281,12 +310,11 @@
 !
       real(r8) :: r, phi, Su, Au
       real(r8) :: Sk, Ak
-      real(r8) :: T_cu, T_tu, T_t, T_c
-      real(r8) :: umax, umin, RR
+      real(r8) :: T_cu, T_tu
+      real(r8) :: umax, umin
 !
-      real(r8) :: uc_r, ut_r
       real(r8) :: uhat_c, uhat_t
-      real(r8) :: udelta, mag_uc, mag_ut
+      real(r8) :: mag_uc, mag_ut
 !
       real(r8) :: theta
       real(r8) :: fd, ksw, eta, alpha, tau_wRe
@@ -351,6 +379,11 @@
         rhos=Srho(ised,ng)                      ! (kg/m3)
         d50=sd50(ised,ng)                       ! (m)
         d90=1.3_r8*d50                          ! (m)
+        IF(NST>1) THEN 
+          d50_mix=0.0003                          ! 0.3 mm 
+        ELSE
+          d50_mix=d50
+        ENDIF 
 !
         cff=rhos/rho0
         smgd=(cff-1.0_r8)*g*d50
@@ -387,15 +420,17 @@
 ! common to both crest and trough.
 !-----------------------------------------------------------------------
 !
-            CALL skewness_params(Hs, Td, depth, r, phi)
+            CALL skewness_params(Hs, Td, depth, r, phi, ursell_no(i,j))
 !        
 !-----------------------------------------------------------------------
 ! Abreu et al. use skewness params to get representative critical orbital
 ! velocity for crest and trough cycles , use r and phi.
 !-----------------------------------------------------------------------
 ! 
-            CALL abreu_points(r, phi, uhat, Td,  T_c, T_t,              &
-     &                                    T_cu, T_tu, umax, umin, RR)
+            CALL abreu_points(r, phi, uhat, Td,                         &
+     &                        T_crest(i,j), T_trough(i,j),              &
+     &                        T_cu, T_tu, umax, umin,                   &
+     &                        RR_asymwave(i,j), beta_asymwave(i,j))
 !
 !-----------------------------------------------------------------------
 !                         Crest half cycle
@@ -411,22 +446,26 @@
 ! VA2013 Equation 10, 11.
 !-----------------------------------------------------------------------
 !
-            uc_r=0.5_r8*sqrt(2.0_r8)*uhat_c
-            ut_r=0.5_r8*sqrt(2.0_r8)*uhat_t
+            ucrest_r(i,j)=0.5_r8*sqrt(2.0_r8)*uhat_c
+            utrough_r(i,j)=0.5_r8*sqrt(2.0_r8)*uhat_t
 !
             smgd=(rhos/rho0-1.0_r8)*g*d50
             osmgd=1.0_r8/smgd
 ! 
 ! Full wave cycle 
 ! 
-            CALL full_wave_cycle_stress_factors( d50, d90, osmgd,       &
+            CALL full_wave_cycle_stress_factors(ng, d50, d90, osmgd,    &
      &                                                 Td, depth,       &
      &                                    umag_curr, phi_curwave,       &
-     &                                            RR, uhat, ahat,       &
+     &                                    RR_asymwave(i,j), uhat, ahat, &
      &                                                umax, umin,       &
      &                                                 mag_bstrc,       &
-     &                                      T_c, T_t, T_cu, T_tu,       &
-     &                           eta, udelta, alpha, fd, ksw, tau_wRe )
+     &                                    T_crest(i,j), T_trough(i,j),  &
+     &                                                T_cu, T_tu,       &
+     &                                    ksd_wbl(i,j), ustrc_wbl(i,j), &
+     &                                  thck_wbl(i,j), udelta_wbl(i,j), &
+     &                                                     fd_wbl(i,j), &
+                                           alpha, eta, ksw, tau_wRe )
 !
 !-----------------------------------------------------------------------
 ! 2. Bed shear stress (Shields parameter) for Crest half cycle 
@@ -436,10 +475,11 @@
 !    alpha VA2013 Eqn. 19  
 !-----------------------------------------------------------------------
 !
-            CALL half_wave_cycle_stress_factors( T_cu, T_c, ahat, ksw,  &
-     &                                           fd, alpha,             &
+            CALL half_wave_cycle_stress_factors( T_cu, T_crest(i,j),    &
+     &                                           ahat, ksw,             &
+     &                                          fd_wbl(i,j), alpha,     &
      &                                           d50, osmgd,            &
-     &                                uc_r, uhat_c, udelta, phi_curwave,&
+     &              ucrest_r(i,j), uhat_c, udelta_wbl(i,j), phi_curwave,&
      &                                           tau_wRe,               &
      &                          dsf_c, theta_cx, theta_cy, mag_theta_c )
 !
@@ -449,21 +489,22 @@
 !
             wavecycle=1.0_r8
             CALL sandload_vandera( wavecycle,                           &
-     &                              Hs, Td,  depth, RR,                 &
-     &                              d50, rhos, c_w,                     &
+     &                              Hs, Td,  depth, RR_asymwave(i,j),   &
+     &                              d50, d50_mix, rhos, c_w,            &
      &                              eta, dsf_c,                         &
-     &                              T_c, T_cu, uhat_c, mag_theta_c,     &
-     &                              om_cc, om_tc)
+     &                              T_crest(i,j), T_cu, uhat_c,         &
+     &                              mag_theta_c, om_cc, om_tc )
 !
 !-----------------------------------------------------------------------
 ! 2. Bed shear stress (Shields parameter) for Trough half cycle 
 !    alpha VA2013 Eqn. 19  
 !-----------------------------------------------------------------------
 !
-            CALL half_wave_cycle_stress_factors( T_tu, T_t, ahat, ksw,  &
-     &                                           fd, alpha,             &
+            CALL half_wave_cycle_stress_factors( T_tu, T_trough(i,j),   &
+     &                                           ahat, ksw,             &
+     &                                         fd_wbl(i,j), alpha,      &
      &                                           d50, osmgd,            &
-     &                                ut_r, uhat_t, udelta, phi_curwave,&
+     &             utrough_r(i,j), uhat_t, udelta_wbl(i,j), phi_curwave,&
      &                                           tau_wRe,               &
      &                          dsf_t, theta_tx, theta_ty, mag_theta_t )
 !
@@ -473,17 +514,17 @@
 !
             wavecycle=-1.0_r8
             CALL sandload_vandera( wavecycle,                           &
-     &                              Hs, Td,  depth, RR,                 &
-     &                              d50, rhos, c_w,                     &
+     &                              Hs, Td,  depth, RR_asymwave(i,j),   &
+     &                              d50, d50_mix, rhos, c_w,            &
      &                              eta, dsf_t,                         &
-     &                              T_t, T_tu, uhat_t, mag_theta_t,     &
-     &                              om_tt, om_ct)
+     &                              T_trough(i,j), T_tu, uhat_t,        &
+     &                              mag_theta_t, om_tt, om_ct )
 !
 !-----------------------------------------------------------------------
 ! 3. Compute sediment load entrained during each trough half cycle
 !-----------------------------------------------------------------------
 !
-            cff1=MAX(0.5_r8*T_c/T_cu, 0.0_r8)
+            cff1=MAX(0.5_r8*T_crest(i,j)/T_cu, 0.0_r8)
 !
             cff2=sqrt(mag_theta_c)*(om_cc+cff1*om_tc)  
             cff3=(theta_cx/mag_theta_c)
@@ -492,7 +533,7 @@
             cff3=(theta_cy/mag_theta_c)
             bedld_cy=cff2*cff3
 !
-            cff1=MAX(0.5_r8*T_t/T_tu, 0.0_r8)
+            cff1=MAX(0.5_r8*T_trough(i,j)/T_tu, 0.0_r8)
 !
             cff2=sqrt(mag_theta_t)*(om_tt+cff1*om_ct)
             cff3=(theta_tx/mag_theta_t)
@@ -508,19 +549,16 @@
 !
             smgd_3=sqrt((rhos/rho0-1.0_r8)*g*d50**3.0_r8)
 !
-! COMMENTED FOR NOW 
-!   
-            bedld_x=smgd_3*(bedld_cx*T_c+bedld_tx*T_t)/Td
-            bedld_y=smgd_3*(bedld_cy*T_c+bedld_ty*T_t)/Td
-!            write(66,*) "bedlcx",bedld_cx,"bedldcy",bedld_cy
-!            write(67,*) "bedltx",bedld_tx,"bedldty",bedld_ty
-!            write(68,*) "bedld_x",bedld_x,"bedld_y",bedld_y
+            bedld_x=smgd_3*( bedld_cx*T_crest(i,j)+                     &
+     &                       bedld_tx*T_trough(i,j) )/Td
+            bedld_y=smgd_3*( bedld_cy*T_crest(i,j)+                     &
+     &                       bedld_ty*T_trough(i,j) )/Td
 !
 ! The units of these are kg m-1 sec-1
 ! COMMENTED FOR NOW 
 !
-            bedld_x=rhos*bedld_x
-            bedld_y=rhos*bedld_y
+            bedld_x=rhos*bedld_x*bed_frac(i,j,1,ised)
+            bedld_y=rhos*bedld_y*bed_frac(i,j,1,ised)
 !           
 ! Convert bedload from the wave aligned axis to xi and eta directions
 ! 
@@ -1087,7 +1125,7 @@
 ! 
       SUBROUTINE sandload_vandera( wavecycle,                           &
      &                              Hs, Td,  depth, RR,                 &
-     &                              d50, rhos, c_w,                     &
+     &                              d50, d50_mix, rhos, c_w,            &
      &                              eta, dsf,                           &
      &                              T_i, T_iu, uhat_i, mag_theta_i,     &
      &                              om_ii, om_iy )
@@ -1100,7 +1138,7 @@
 !
       real(r8), intent(in) :: wavecycle
       real(r8), intent(in) :: Hs, Td, depth, RR
-      real(r8), intent(in) :: d50, rhos, c_w
+      real(r8), intent(in) :: d50, d50_mix, rhos, c_w
       real(r8), intent(in) :: eta, dsf
       real(r8), intent(in) :: T_i, T_iu
       real(r8), intent(in) :: uhat_i, mag_theta_i
@@ -1169,11 +1207,11 @@
         P=alpha_fac*dsf*cff*cff1_dsf
       ENDIF
 !
-!      eps_eff=(dsf/d50)**0.25_r8
+      eps_eff=(d50/d50_mix)**0.25_r8
 !
 ! CRS for multiple sed types
 !
-      eps_eff=1.0_r8 
+!      eps_eff=1.0_r8 
       theta_ieff=eps_eff*mag_theta_i
 ! 
 ! Find critical Shields parameters based on Soulsby (1997).
@@ -1201,27 +1239,20 @@
         cff=1.0_r8/P
         om_iy=om_i*(1.0_r8-cff)
       ENDIF
-
-!      IF(P.le.1.0_r8) THEN
-!        om_ii=om_i
-!        om_iy=0.0_r8
-!      ELSE
-!       om_ii=om_i/P
-!        cff=1.0_r8/P
-!       om_iy=om_i*(1.0_r8-cff)
-!      ENDIF
 !
       RETURN
       END SUBROUTINE sandload_vandera
 !
-      SUBROUTINE full_wave_cycle_stress_factors( d50, d90, osmgd,       &
+      SUBROUTINE full_wave_cycle_stress_factors( ng, d50, d90, osmgd,   &
      &                                                 Td, depth,       &
      &                                    umag_curr, phi_curwave,       &
      &                                            RR, uhat, ahat,       &
      &                                                umax, umin,       &
-     &                                                mag_bstrc,        &
+     &                                                 mag_bstrc,       &
      &                                      T_c, T_t, T_cu, T_tu,       &
-     &                           eta, udelta, alpha, fd, ksw, tau_wRe)
+     &                                                ksd, ustrc,       &
+     &                                          delw, udelta, fd,       &
+     &                                   alpha, eta, ksw, tau_wRe )
 !
 !**********************************************************************
 !  This subroutine returns the following:
@@ -1233,11 +1264,18 @@
 !                        based on current velocity
 !**********************************************************************
 ! 
+      USE mod_grid
       USE mod_kinds
       USE mod_scalars
+      USE mod_sediment 
+      USE mod_sedbed 
       USE mod_vandera_funcs
 !
       implicit none
+!
+!  Imported variable declarations.
+!
+      integer, intent(in) :: ng
 !  
 ! Input the crest or trough half cycle velocity
 ! d50 -- grain size in meters
@@ -1245,13 +1283,13 @@
 !       
       real(r8), intent(in) :: d50, d90, osmgd
       real(r8), intent(in) :: Td, depth
-!      real(r8), intent(in) :: umag_curr, phi_curwave, Zref
       real(r8), intent(in) :: umag_curr, phi_curwave
       real(r8), intent(in) :: RR, uhat, ahat
       real(r8), intent(in) :: umax, umin
       real(r8), intent(in) :: mag_bstrc
       real(r8), intent(inout) :: T_c, T_t, T_cu, T_tu
-      real(r8), intent(inout) :: eta, udelta, fd, ksw, tau_wRe
+      real(r8), intent(inout) :: udelta, delw, fd   
+      real(r8), intent(inout) :: alpha, eta, ksw, tau_wRe
 !
 !  Local variables
 ! 
@@ -1265,11 +1303,10 @@
       real(r8) :: psi  ! maximum mobility number
       real(r8) :: rlen ! ripple length
       real(r8) :: omega
-      real(r8) :: ksd  
+      real(r8) :: ksd, ustrc  
       real(r8) :: fw
-      real(r8) :: alpha
-      real(r8) :: alpha_w, fwd, k, c_w
-      real(r8) :: ustarw, delw, cff
+      real(r8) :: alpha_w, fwd, c_w
+      real(r8) :: ustarw
 !
 ! Iterative solution to obtain current and wave related bed roughness
 ! VA2013 Apendix A, Shields parameter (Stress) depends on bed roughness 
@@ -1294,6 +1331,11 @@
 !
       theta_timeavg=0.0_r8
       theta_timeavg_old=0.0_r8
+!
+# if defined BEDLOAD_VANDERA_MADSEN 
+      fd=fd_calc_new(udelta, mag_bstrc)
+# endif 
+
       DO iter=1,total_iters
 ! 
 ! Calculate wave related bed roughness from VA2013 A.5     
@@ -1304,24 +1346,30 @@
 !
         fw=fw_calc(ahat, ksw)
 !
-!
 ! Calculate Time-averaged absolute Shields stress VA2013 Appendix Eq. A.3
 ! 
+#if defined BEDLOAD_VANDERA_MADSEN
+        theta_timeavg=osmgd*(0.5_r8*fd*udelta**2.0_r8+                  &
+     &                       0.25_r8*fw*uhat**2.0_r8)
+#else
         theta_timeavg=osmgd*(mag_bstrc+0.25_r8*fw*uhat**2.0_r8)
+#endif 
 !
         IF(ABS(theta_timeavg-theta_timeavg_old).lt.tol) THEN
           EXIT
         ENDIF
         theta_timeavg_old=theta_timeavg
       END DO
-! 
-! Calculate current-related bed roughness from VA2013 Appendix A.1
-! dont need ksd if fd is directly computed from mag_bustrc 
-      ksd=ksd_calc(d50, d90, mu_calc(d50), theta_timeavg, eta, rlen)
+!
+#if ! defined BEDLOAD_VANDERA_MADSEN 
 !
 ! Calculate full-cycle current friction factor from VA2013 Eqn. 20
 ! 
 !      fd=fd_calc(umag_curr, Zref, ksd)
+! 
+! Calculate current-related bed roughness from VA2013 Appendix A.1
+! dont need ksd if fd is directly computed from mag_bustrc 
+      ksd=ksd_calc(d50, d90, mu_calc(d50), theta_timeavg, eta, rlen)
 !
 ! This is commented now because we calculate current friction factor
 ! from current-based shear stress 
@@ -1330,23 +1378,28 @@
 !
       ustarw=SQRT(0.5_r8*fw*uhat**2.0_r8)
       delw=2.0_r8*von_k*ustarw/omega
-      delw=delw*crs_fac 
+!
+      IF(thck_wbl_inp(ng).gt.0.0_r8) THEN 
+        delw=thck_wbl_inp(ng)
+      ENDIF 
 !
 ! Can also hardwire delw
-! delw=0.2_r8
+! Calculate the current velocity at a location at the height of wave boundary layer
 !
-      cff=SQRT(mag_bstrc/rho0)  ! ustarc 
-!
+      ustrc=SQRT(mag_bstrc)  ! ustarc 
       IF(uhat.eq.0.0_r8) THEN 
         udelta=0.05_r8
       ELSE 
-        udelta=MAX( ((cff/von_k)*log(30.0_r8*delw/ksd)), eps )
-!        udelta=udelta*crs_inc
+        udelta=MAX( ((ustrc/von_k)*log(30.0*delw/ksd)), eps )
       ENDIF 
+!       
+      fd=fd_calc_new(udelta, mag_bstrc)
+!
+#endif 
 !
 ! Calculate full-cycle current friction factor from VA2013 Eqn. 20
+! use the stress from COAWST and corresponding current velocity 
 !
-      fd=fd_calc_new(udelta, mag_bstrc)
 !      
       alpha=udelta/(udelta+uhat)
       fwd=alpha*fd+(1.0-alpha)*fw
@@ -1355,18 +1408,18 @@
       c_w=2*pi/(k_wn*Td)          ! Wave speed
       alpha_w=0.424_r8
 !
-      tau_wRe=MAX((rho0*fwd*alpha_w*uhat**3.0_r8/(2.0_r8*c_w)),eps)
+!      tau_wRe=MAX((rho0*fwd*alpha_w*uhat**3.0_r8/(2.0_r8*c_w)),eps)
+      tau_wRe=0.0_r8
 !        
 ! Compute the change in time period based on converged udelta 
 ! (current velocity at wave boundary layer)
 !
       CALL current_timeperiod(udelta, phi_curwave, umax, umin, RR,      &
      &                        T_c, T_t, Td)
-
 !
 ! Calculate the effect of surface waves 
 !
-      CALL surface_wave_mod(Td, depth, uhat, T_c, T_cu, T_t, T_tu)
+!      CALL surface_wave_mod(Td, depth, uhat, T_c, T_cu, T_t, T_tu)
 !
       END SUBROUTINE full_wave_cycle_stress_factors
 !
@@ -1446,7 +1499,7 @@
 ! 
 !      mag_theta_i=MAX(0.5_r8*fwd_i*osmgd*(mag_ui**2), 0.0_r8)
            
-      mag_theta_i=0.5_r8*fwd_i*osmgd*(mag_ui**2.0_r8)
+      mag_theta_i=MAX(0.5_r8*fwd_i*osmgd*(mag_ui**2.0_r8), eps)
 !
 !-----------------------------------------------------------------------
 ! Shields parameter in crest cycle
@@ -1456,8 +1509,6 @@
       theta_ix=ABS(mag_theta_i)*ui_rx/(mag_ui)+tau_wRe*osmgd/rho0
       theta_iy=ABS(mag_theta_i)*ui_ry/(mag_ui)
 !
-!      write(72,*) "thetax",theta_ix, "thetay",theta_iy
-!      
 ! mag_theta_i is set to a min value to avoid non-zero division
 !
       mag_theta_i=MAX( sqrt(theta_ix*theta_ix+theta_iy*theta_iy),eps )
@@ -1655,7 +1706,7 @@
       RETURN
       END SUBROUTINE ripple_dim
 !
-      SUBROUTINE skewness_params( H_s, T, depth, r, phi )
+      SUBROUTINE skewness_params( H_s, T, depth, r, phi, Ur )
 !        
 ! Ruessink et al. provides equations for calculating skewness parameters
 ! Uses Malarkey and Davies equations to get "bb" and "r"
@@ -1672,8 +1723,9 @@
 !
       implicit none
 !
-      real(r8), intent(in)  :: H_s, T, depth
-      real(r8), intent(out) :: r, phi
+      real(r8), intent(in)    :: H_s, T, depth
+      real(r8), intent(inout) :: Ur
+      real(r8), intent(out)   :: r, phi
 !
 ! Local variables 
 ! 
@@ -1683,7 +1735,7 @@
       real(r8), parameter :: p4=0.297_r8
       real(r8), parameter :: p5=0.815_r8
       real(r8), parameter :: p6=0.672_r8
-      real(r8) :: a_w, Ur
+      real(r8) :: a_w
       real(r8) :: B, psi, bb
       real(r8) :: k_wn, cff
 !      real(r8) :: kh_calc
@@ -1724,7 +1776,7 @@
       END SUBROUTINE skewness_params
 
       SUBROUTINE abreu_points( r, phi, Uw, T, DTc, DTt,                 &
-     &                                 DTcu, DTtu, umax, umin, RR )
+     &                            DTcu, DTtu, umax, umin, RR, beta )
 ! 
 !  Calculate umax, umin, and phases of asymmetrical wave orbital velocity 
 !
@@ -1741,13 +1793,13 @@
 !
       real(r8), intent(in)  :: r, phi, Uw, T
       real(r8), intent(out) :: Dtc, DTt, DTcu, DTtu
-      real(r8), intent(out) :: umax, umin, RR
+      real(r8), intent(out) :: umax, umin, RR, beta
 !
 ! Local variables 
 ! 
       real(r8) :: b, c, ratio, tmt, tmc, tzd, tzu
       real(r8) :: omega, w, phi_new
-      real(r8) :: P, F0, betar_0, beta
+      real(r8) :: P, F0, betar_0
       real(r8) :: T_tu, T_cu, T_c, T_t
       real(r8) :: cff1, cff2, cff
       real(r8) :: Sk, Ak

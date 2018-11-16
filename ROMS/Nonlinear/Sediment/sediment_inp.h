@@ -833,6 +833,151 @@
                   Hout(i,ng)=Lsand(itrc,ng)
                 END DO
               END DO
+# ifdef BEDLOAD_VANDERA 
+            CASE ('Hout(idsurs)')
+              IF ((idsurs).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsurs'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsurs,:))
+            CASE ('Hout(idsrrw)')
+              IF ((idsrrw).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsrrw'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsrrw,:))
+            CASE ('Hout(idsbtw)')
+              IF ((idsbtw).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsbtw'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsbtw,:))
+            CASE ('Hout(idsksd)')
+              IF ((idsksd).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsksd'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsksd,:))
+            CASE ('Hout(idsusc)')
+              IF ((idsusc).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsusc'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsusc,:))
+            CASE ('THCK_WBL_INP')
+              Npts=load_r(Nval, Rval, Ngrids, Rbed)
+                DO ng=1,Ngrids
+                  THCK_WBL_INP(ng)=Rbed(ng)
+                END DO
+            CASE ('Hout(idstbl)')
+              IF ((idstbl).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idstbl'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idstbl,:))
+            CASE ('Hout(idsubl)')
+              IF ((idsubl).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsubl'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsubl,:))
+            CASE ('Hout(idsfdw)')
+              IF ((idsfdw).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsfdw'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsfdw,:))
+!            CASE ('Hout(idsucr)')
+!              IF ((idsucr).eq.0) THEN
+!               IF (Master) WRITE (out,30) 'idsucr'
+!                exit_flag=5
+!                RETURN
+!              END IF
+!              Npts=load_l(Nval, Cval, Ngrids, Hout(idsucr,:))
+!            CASE ('Hout(idsutr)')
+!              IF ((idsutr).eq.0) THEN
+!               IF (Master) WRITE (out,30) 'idsutr'
+!                exit_flag=5
+!                RETURN
+!              END IF
+!              Npts=load_l(Nval, Cval, Ngrids, Hout(idsutr,:))
+!            CASE ('Hout(idsksd)')
+!              IF ((idsksd).eq.0) THEN
+!               IF (Master) WRITE (out,30) 'idsksd'
+!                exit_flag=5
+!                RETURN
+!              END IF
+!!              Npts=load_l(Nval, Cval, Ngrids, Hout(idsksd,:))
+!            CASE ('Hout(idsusc)')
+!              IF ((idsusc).eq.0) THEN
+!               IF (Master) WRITE (out,30) 'idsusc'
+!                exit_flag=5
+!                RETURN
+!              END IF
+!              Npts=load_l(Nval, Cval, Ngrids, Hout(idsusc,:))
+!            CASE ('THCK_WBL_INP')
+!              Npts=load_r(Nval, Rval, Ngrids, Rbed)
+!                DO ng=1,Ngrids
+!                  THCK_WBL_INP(ng)=Rbed(ng)
+!                END DO
+!            CASE ('Hout(idstbl)')
+!              IF ((idstbl).eq.0) THEN
+!               IF (Master) WRITE (out,30) 'idstbl'
+!                exit_flag=5
+!                RETURN
+!              END IF
+!!              Npts=load_l(Nval, Cval, Ngrids, Hout(idstbl,:))
+!            CASE ('Hout(idsubl)')
+!              IF ((idsubl).eq.0) THEN
+!               IF (Master) WRITE (out,30) 'idsubl'
+!                exit_flag=5
+!                RETURN
+!              END IF
+!              Npts=load_l(Nval, Cval, Ngrids, Hout(idsubl,:))
+!            CASE ('Hout(idsfdw)')
+!              IF ((idsfdw).eq.0) THEN
+!               IF (Master) WRITE (out,30) 'idsfdw'
+!                exit_flag=5
+!                RETURN
+!              END IF
+!              Npts=load_l(Nval, Cval, Ngrids, Hout(idsfdw,:))
+            CASE ('Hout(idsucr)')
+              IF ((idsucr).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsucr'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsucr,:))
+            CASE ('Hout(idsutr)')
+              IF ((idsutr).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsutr'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsutr,:))
+            CASE ('Hout(idstcr)')
+              IF ((idstcr).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idstcr'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idstcr,:))
+            CASE ('Hout(idsttr)')
+              IF ((idsttr).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idsttr'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idsttr,:))
+# endif
 #endif
             CASE ('Qout(idsand)')
               Npts=load_l(Nval, Cval, NNS*Ngrids, Lsand)

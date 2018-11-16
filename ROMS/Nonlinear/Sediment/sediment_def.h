@@ -33,7 +33,7 @@
      &               SetParAccess = .FALSE.)
       IF (FoundError(exit_flag, NoError, __LINE__,                      &
      &               __FILE__)) RETURN
-
+!
 #ifdef BEDLOAD
       Vinfo( 1)='bedload_coeff'
       Vinfo( 2)='bedload transport rate coefficient'
@@ -42,8 +42,19 @@
      &               SetParAccess = .FALSE.)
       IF (FoundError(exit_flag, NoError, __LINE__,                      &
      &               __FILE__)) RETURN
+!
+# ifdef BEDLOAD_VANDERA
+      Vinfo( 1)='thck_wbl_inp'
+      Vinfo( 2)='input thickness at the wave boundary layer'
+      status=def_var(ng, model, ncid, varid, NF_TYPE,                   &
+     &               1, (/0/), Aval, Vinfo, ncname,                     &
+     &               SetParAccess = .FALSE.)
+      IF (FoundError(exit_flag, NoError, __LINE__,                      &
+     &               __FILE__)) RETURN
+# endif 
+!
 #endif
-
+!
 !#ifdef ANA_SEDIMENT
       Vinfo( 1)='Sd50'
       Vinfo( 2)='median sediment grain diameter used in '//             &

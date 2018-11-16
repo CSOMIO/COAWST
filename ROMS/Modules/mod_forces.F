@@ -291,7 +291,8 @@
 # endif
 #endif
 
-#if defined BBL_MODEL || defined WAVES_OCEAN
+#if defined BBL_MODEL || defined WAVES_OCEAN || \
+    defined SED_BEDLOAD_VANDERA
           real(r8), pointer :: Uwave_rms(:,:)
 # ifndef ANA_WWAVE
           real(r8), pointer :: Uwave_rmsG(:,:,:)

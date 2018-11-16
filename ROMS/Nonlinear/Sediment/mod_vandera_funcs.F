@@ -220,27 +220,27 @@
 ! This function is not getting used at the time because
 ! we compute current frction factor from bottom current stress 
 ! 
-!      REAL(r8) FUNCTION fd_calc(umag_curr, Zref, ksd)
-!
-!     USE mod_kinds
-!     USE mod_scalars
-!
-!     implicit none
-!
+     REAL(r8) FUNCTION fd_calc_old(umag_curr, delta, ksd)
+
+     USE mod_kinds
+     USE mod_scalars
+
+     implicit none
+
 ! Calculate current related friction factor VA2013 Eqn. 20
 ! Assuming logarithmic velocity profile.
-! 
-!     real(r8) :: umag_curr, Zref, ksd
-!     real(r8), parameter :: von_k=0.41_r8
-! 
-!     IF(umag_curr.eq.0.0_r8) THEN
-!       fd_calc=0.0_r8
-!     ELSE
-!       fd_calc=2.0_r8*(von_k/LOG(30.0_r8*Zref/ksd))**2.0_r8
-!     ENDIF
-!     
-!     RETURN
-!     END FUNCTION fd_calc
+ 
+     real(r8) :: umag_curr, delta, ksd
+     real(r8), parameter :: von_k=0.41_r8
+ 
+     IF(umag_curr.eq.0.0_r8) THEN
+       fd_calc_old=0.0_r8
+     ELSE
+       fd_calc_old=2.0_r8*(von_k/LOG(30.0_r8*delta/ksd))**2.0_r8
+     ENDIF
+     
+     RETURN
+     END FUNCTION fd_calc_old
 !
       REAL(r8) FUNCTION fd_calc_new(udelta, mag_bstrc)
 !

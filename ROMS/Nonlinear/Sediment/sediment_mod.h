@@ -26,6 +26,8 @@
 !   newlayer_thick  New layer deposit thickness criteria (m).          !
 !   morph_fac       Morphological scale factor (nondimensional).       !
 !                                                                      !
+!   thck_wbl_inp    Thickness of the wave boundary layer (m)           !
+!                                                                      !
 !  BED properties indices:                                             !
 !  ======================                                              !
 !                                                                      !
@@ -129,6 +131,23 @@
       integer, allocatable :: idUbld(:)    ! bed load u-points
       integer, allocatable :: idVbld(:)    ! bed load v-points
 !
+#if defined BEDLOAD 
+# if defined BEDLOAD_VANDERA
+      integer :: idsurs                    ! Ursell number of the asymmetric wave
+      integer :: idsrrw                    ! velocity skewness of the asymmetric wave 
+      integer :: idsbtw                    ! acceleration asymmetry parameter
+      integer :: idsksd                    ! Bed roughness (zo) to calc. wave boundary layer 
+      integer :: idsusc                    ! Current friction velocity at wave boundary layer 
+      integer :: idstbl                    ! Thickness at wave boundary layer 
+      integer :: idsubl                    ! Current velocity at wave boundary layer 
+      integer :: idsfdw                    ! Friction factor from the current cycle  
+      integer :: idsucr                    ! Crest velocity of the asymmetric wave 
+      integer :: idsutr                    ! Trough velocity of the asymmetric wave
+      integer :: idstcr                    ! Crest time period of the asymmetric wave 
+      integer :: idsttr                    ! Trough time period of the asymmetric wave
+# endif  
+#endif 
+!
 !-----------------------------------------------------------------------
 !  Input sediment parameters.
 !-----------------------------------------------------------------------
@@ -136,7 +155,13 @@
       real(r8), allocatable :: newlayer_thick(:)   ! deposit thickness criteria
       real(r8), allocatable :: minlayer_thick(:)   ! 2nd layer thickness criteria
       real(r8), allocatable :: bedload_coeff(:)    ! bedload rate coefficient
-
+!
+#if defined BEDLOAD 
+# if defined BEDLOAD_VANDERA
+      real(r8), allocatable :: thck_wbl_inp(:)    ! bedload rate coefficient
+# endif  
+#endif 
+!
       real(r8), allocatable :: Csed(:,:)       ! initial concentration
       real(r8), allocatable :: Erate(:,:)      ! erosion rate
       real(r8), allocatable :: Sd50(:,:)       ! mediam grain diameter
@@ -298,7 +323,16 @@
         allocate ( bedload_coeff(Ngrids) )
         bedload_coeff = IniVal
       END IF
-
+!
+#if defined BEDLOAD
+# if defined BEDLOAD_VANDERA
+      IF (.not.allocated(thck_wbl_inp)) THEN
+        allocate ( thck_wbl_inp(Ngrids) )
+        thck_wbl_inp = IniVal
+      END IF
+# endif
+#endif
+!
 #if defined COHESIVE_BED || defined MIXED_BED
       IF (.not.allocated(tcr_min)) THEN
         allocate ( tcr_min(Ngrids) )
