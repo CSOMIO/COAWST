@@ -298,7 +298,7 @@
       real(r8) :: cff, cff1, cff2, cff3, cff4, cff5, fac1, fac2
       real(r8) :: Dstp, bed_change, dz, roll
       real(r8) :: a_slopex, a_slopey, sed_angle
-      real(r8) :: bedld, bedld_mass, dzdx, dzdy
+      real(r8) :: bedld, bedld_mass, dzdx, dzdy, dzdxdy
       real(r8) :: rhs_bed, Ua, Ra, Clim, phi_cw
 !
       real(r8) :: Hs, Td, depth
