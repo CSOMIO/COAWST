@@ -1788,7 +1788,8 @@
               END IF
               Npts=load_l(Nval, Cval, Ngrids, Hout(idWpbt,:))
 #endif
-#if defined BBL_MODEL || defined WAVES_OCEAN
+#if defined WAVES_OCEAN || defined BEDLOAD_SOULSBY || \
+    defined BEDLOAD_VANDERA || defined BBL_MODEL
             CASE ('Hout(idWorb)')
               IF (idWorb.eq.0) THEN
                 IF (Master) WRITE (out,280) 'idWorb'
@@ -6000,7 +6001,8 @@
      &         'Hout(idWpbt)',                                          &
      &         'Write out wave bottom period.'
 #endif
-#if defined BBL_MODEL || defined WAVES_OCEAN
+#if defined BBL_MODEL || defined WAVES_OCEAN \
+    defined BEDLOAD_SOULSBY || defined BEDLOAD_VANDERA
             IF (Hout(idWorb,ng)) WRITE (out,170) Hout(idWorb,ng),       &
      &         'Hout(idWorb)',                                          &
      &         'Write out wave bottom orbital velocity.'

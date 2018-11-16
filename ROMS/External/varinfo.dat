@@ -3626,6 +3626,114 @@
   'v2dvar'
   1.0d0
 
+'ursell_no'                                       ! Output
+  'Ursell number'
+  'non-dimensional'                               ! [Non-dimensional]
+  'Ursell_nu, scalar, series'
+  'ocean_time'
+  'idsurs'
+  'r2dvar'
+  1.0d0
+
+'RR_asymwave'                                     ! Output
+  'Velocity skewness parameter of the asymmetric wave'
+  'non-dimensional'                               ! [Non-dimensional]
+  'RR_asymwave, scalar, series'
+  'ocean_time'
+  'idsrrw'
+  'r2dvar'
+  1.0d0
+
+'beta_asymwave'                                     ! Output
+  'Acceleration asymmetry parameter of the asymmetric wave'
+  'non-dimensional'                               ! [Non-dimensional]
+  'beta_asymwave, scalar, series'
+  'ocean_time'
+  'idsbtw'
+  'r2dvar'
+  1.0d0
+
+'ksd_wbl'                                         ! Output
+  'Bed roughness (Zo) for wave boundary layer calc.' 
+  'meter'                                         ! [m/s]
+  'ksd_wbl, scalar, series' 
+  'ocean_time'
+  'idsksd'
+  'r2dvar'
+  1.0d0
+
+'ustrc_wbl'                                       ! Output
+  'Current friction velocity at the wave boundary layer' 
+  'meter'                                         ! [m/s]
+  'ustrc_wbl, scalar, series' 
+  'ocean_time'
+  'idsusc'
+  'r2dvar'
+  1.0d0
+
+'thck_wbl'                                        ! Output
+  'Thickness of the wave boundary layer' 
+  'meter'                                         ! [m]
+  'thck_wbl, scalar, series' 
+  'ocean_time'
+  'idstbl'
+  'r2dvar'
+  1.0d0
+
+'udelta_wbl'                                      ! Output
+  'Current velocity at the wave boundary layer' 
+  'meter s-1'                                     ! [m/s]
+  'udelta_wbl, scalar, series' 
+  'ocean_time'
+  'idsubl'
+  'r2dvar'
+  1.0d0
+
+'fd_wbl'                                          ! Output
+  'Friction factor from the currents' 
+  'non-dimensional'                               ! [Non-dimensional]
+  'fd_wbl, scalar, series' 
+  'ocean_time'
+  'idsfdw'
+  'r2dvar'
+  1.0d0
+
+'ucrest_r'                                        ! Output
+  'Crest velocity of the asymmetric wave' 
+  'meter s-1'                                     ! [m/s]
+  'ucrest_r, scalar, series' 
+  'ocean_time'
+  'idsucr'
+  'r2dvar'
+  1.0d0
+
+'utrough_r'                                       ! Output
+  'Trough velocity of the asymmetric wave' 
+  'meter s-1'                                     ! [m/s]
+  'utrough_r, scalar, series' 
+  'ocean_time'
+  'idsutr'
+  'r2dvar'
+  1.0d0
+
+'T_crest'                                         ! Output
+  'Crest wave time period of the asymmetric wave' 
+  's'                                             ! [s]
+  'T_crest, scalar, series' 
+  'ocean_time'
+  'idstcr'
+  'r2dvar'
+  1.0d0
+
+'T_trough'                                       ! Output
+  'Trough wave time period of the asymmetric wave' 
+  's'                                            ! [s]
+  'T_trough, scalar, series' 
+  'ocean_time'
+  'idsttr'
+  'r2dvar'
+  1.0d0
+
 'ero_flux'                                         ! Output
   'erosion flux'
   'kilogram meter-2'                               ! [kg/m2]

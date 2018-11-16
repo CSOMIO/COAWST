@@ -26,13 +26,21 @@
      &                      ncid = ncid)
       IF (FoundError(exit_flag, NoError, __LINE__,                      &
      &               __FILE__)) RETURN
-
+!
 #ifdef BEDLOAD
       CALL netcdf_put_fvar (ng, model, ncname, 'bedload_coeff',         &
      &                      bedload_coeff(ng), (/0/), (/0/),            &
      &                      ncid = ncid)
       IF (FoundError(exit_flag, NoError, __LINE__,                      &
      &               __FILE__)) RETURN
+!
+# ifdef BEDLOAD_VANDERA
+      CALL netcdf_put_fvar (ng, model, ncname, 'thck_wbl_inp',          &
+     &                      thck_wbl_inp(ng), (/0/), (/0/),             &
+     &                      ncid = ncid)
+      IF (FoundError(exit_flag, NoError, __LINE__,                      &
+     &               __FILE__)) RETURN
+# endif
 #endif
 
 !#ifdef ANA_SEDIMENT

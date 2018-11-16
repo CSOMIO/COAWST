@@ -70,6 +70,13 @@
 #if defined SSW_CALC_UB
      &                OCEAN(ng) % zeta,                                 &
 #endif
+#if defined BEDLOAD_VANDERA_MADSEN 
+     &                SEDBED(ng) % ksd_wbl,                             &
+     &                SEDBED(ng) % ustrc_wbl,                           &
+     &                SEDBED(ng) % thck_wbl,                            &
+     &                SEDBED(ng) % udelta_wbl,                          &
+     &                SEDBED(ng) % fd_wbl,                              &
+#endif 
      &                BBL(ng) % Iconv,                                  &
      &                BBL(ng) % Ubot,                                   &
      &                BBL(ng) % Vbot,                                   &
@@ -108,6 +115,10 @@
 #if defined SSW_CALC_UB
      &                      zeta,                                       &
 #endif
+#if defined BEDLOAD_VANDERA_MADSEN 
+     &                      ksd_wbl, ustrc_wbl,                         &
+     &                      thck_wbl, udelta_wbl, fd_wbl,               &
+#endif 
      &                      Iconv,                                      &
      &                      Ubot, Vbot, Ur, Vr,                         &
      &                      bustrc, bvstrc,                             &
@@ -160,6 +171,13 @@
 #if defined SSW_CALC_UB
       real(r8), intent(in) :: zeta(LBi:,LBj:,:)
 #endif
+#if defined BEDLOAD_VANDERA_MADSEN
+      real(r8), intent(inout) :: ksd_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: ustrc_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: thck_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: udelta_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: fd_wbl(LBi:,LBj:)
+#endif 
       real(r8), intent(out) :: Ubot(LBi:,LBj:)
       real(r8), intent(out) :: Vbot(LBi:,LBj:)
       real(r8), intent(out) :: Ur(LBi:,LBj:)
@@ -198,6 +216,13 @@
 #if defined SSW_CALC_UB
       real(r8), intent(in) :: zeta(LBi:UBi,LBj:UBj,3)
 #endif
+#if defined BEDLOAD_VANDERA_MADSEN
+      real(r8), intent(inout) :: ksd_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: ustrc_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: thck_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: udelta_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: fd_wbl(LBi:UBi,LBj:UBj)
+#endif 
       real(r8), intent(out) :: Ubot(LBi:UBi,LBj:UBj)
       real(r8), intent(out) :: Vbot(LBi:UBi,LBj:UBj)
       real(r8), intent(out) :: Ur(LBi:UBi,LBj:UBj)
@@ -226,7 +251,7 @@
       real(r8) :: dolam, dolam1, doeta1, doeta2, fdo_etaano
       real(r8) :: lamorb, lamanorb
       real(r8) :: m_ubr, m_wr, m_ucr, m_zr, m_phicw, m_kb
-      real(r8) :: m_ustrc, m_ustrwm, m_ustrr, m_fwc, m_zoa
+      real(r8) :: m_ustrc, m_ustrwm, m_ustrr, m_fwc, m_zoa, m_dwc
       real(r8) :: zo
       real(r8) :: Kb, Kdelta, Ustr
       real(r8) :: anglec, anglew
@@ -292,6 +317,10 @@
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: zoBIO
 
 #include "set_bounds.h"
+
+      m_zoa=1000000000.0_r8
+      m_dwc=0.0_r8
+      m_ustrr=0.0_r8
 !
 !-----------------------------------------------------------------------
 !  Set currents above the bed.
@@ -620,7 +649,8 @@
             m_kb=30.0_r8*zo
             CALL madsen94 (m_ubr, m_wr, m_ucr,                          &
      &                     m_zr, m_phicw, m_kb,                         &
-     &                     m_ustrc, m_ustrwm, m_ustrr, m_fwc, m_zoa)
+     &                     m_ustrc, m_ustrwm, m_ustrr, m_fwc, m_zoa,    &
+     &                     m_dwc)
             Tauc(i,j)=m_ustrc*m_ustrc
             Tauw(i,j)=m_ustrwm*m_ustrwm
             Taucwmax(i,j)=m_ustrr*m_ustrr
@@ -638,6 +668,13 @@
      &                       rheight(i,j)/rlength(i,j))
             END IF
 #endif
+#if defined BEDLOAD_VANDERA_MADSEN
+            ksd_wbl(i,j)=znotc(i,j)
+            ustrc_wbl(i,j)=ABS(m_ustrc)
+            thck_wbl(i,j)=m_dwc
+            udelta_wbl(i,j)=MAX( ((ustrc_wbl(i,j)/vonKar)*              &
+     &                             LOG(m_dwc/ksd_wbl(i,j))) ,eps)
+#endif  
           END IF
         END DO
       END DO
@@ -1261,7 +1298,7 @@
 
 #ifdef M94WC
       SUBROUTINE madsen94 (ubr, wr, ucr, zr, phiwc, kN,                 &
-     &                     ustrc, ustrwm, ustrr, fwc, zoa)
+     &                     ustrc, ustrwm, ustrr, fwc, zoa, dwc_va)
 !
 !=======================================================================
 !                                                                      !
@@ -1283,7 +1320,7 @@
 !     ustrr   Wave-current combined friction velocity, u*r (m/s).      !
 !     fwc     Wave friction factor (nondimensional).                   !
 !     zoa     Apparent bottom roughness (m).                           !
-!                                                                      !
+!     dwc_va  Wave-boundary layer thickness (m).                       !
 !=======================================================================
 !
       USE mod_param
@@ -1292,7 +1329,8 @@
 !  Imported variable declarations.
 !
       real(r8), intent(in) ::  ubr, wr, ucr, zr, phiwc, kN
-      real(r8), intent(out) ::  ustrc, ustrwm, ustrr, fwc, zoa
+      real(r8), intent(out) :: ustrc, ustrwm, ustrr, fwc, zoa
+      real(r8), intent(out) :: dwc_va
 !
 !  Local variable declarations.
 !
@@ -1412,6 +1450,7 @@
       ustrr=SQRT(ustrr2(i))
       phicwc=phiwc
       zoa=EXP(LOG(dwc(i))-(ustrc/ustrr)*LOG(dwc(i)/zo))       ! Eq 11
+      dwc_va=dwc(i)
       fwc=fwci(i)
 
       RETURN

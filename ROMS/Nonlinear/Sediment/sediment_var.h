@@ -28,6 +28,32 @@
                 idSbed(iporo)=varid
               CASE ('idSbed(idiff)')
                 idSbed(idiff)=varid
+#if defined BEDLOAD && defined BEDLOAD_VANDERA
+              CASE ('idsurs')
+                idsurs=varid
+              CASE ('idsrrw')
+                idsrrw=varid
+              CASE ('idsbtw')
+                idsbtw=varid
+              CASE ('idsksd')
+                idsksd=varid
+              CASE ('idsusc')
+                idsusc=varid
+              CASE ('idstbl')
+                idstbl=varid
+              CASE ('idsubl')
+                idsubl=varid
+              CASE ('idsfdw')
+                idsfdw=varid
+              CASE ('idsucr')
+                idsucr=varid
+              CASE ('idsutr')
+                idsutr=varid
+              CASE ('idstcr')
+                idstcr=varid
+              CASE ('idsttr')
+                idsttr=varid
+#endif 
 #if defined COHESIVE_BED || defined SED_BIODIFF || defined MIXED_BED
               CASE ('idSbed(ibtcr)')
                 idSbed(ibtcr)=varid
