@@ -392,21 +392,23 @@
 # ifdef WET_DRY
           waveAA(i,j)=waveAA(i,j)*rmask_wet(i,j)
 # endif
-          sigma(i,j)=SQRT(g*waven(i,j)*TANH(waven(i,j)*Dstp(i,j)))
+          sigma(i,j)=SQRT(MAX(g*waven(i,j)*TANH(waven(i,j)*Dstp(i,j)),  &
+     &                    eps))
           osigma(i,j)=1.0_r8/sigma(i,j)
 !
 !  Compute wave celerity and nonlinear water depth
 !
           kD(i,j)=MIN(waven(i,j)*Dstp(i,j), kDmax)
-          wavec(i,j)=SQRT(g*owaven(i,j)*TANH(kD(i,j)))          
+          wavec(i,j)=SQRT(MAX(g*owaven(i,j)*TANH(kD(i,j)),eps))
 !
 !  Compute metrics for vertical dissipation distribution.
 !
           odiss(i,j)=0.0_r8
-          gamr(i,j)=MIN(0.707_r8*Dstp(i,j)/                             &
-     &              (1.25_r8*Hwave(i,j)+eps),1.0_r8)
+          gamr(i,j)=MAX(MIN(0.707_r8*Dstp(i,j)/                         &
+     &              (1.25_r8*Hwave(i,j)+eps),1.0_r8),0.0_r8)
           DO k=1,N(ng)
-            cff2=(z_r(i,j,k)-z_w(i,j,0))*oDstp(i,j)*gamr(i,j)
+            cff2=MAX(MIN((z_r(i,j,k)-z_w(i,j,0))*oDstp(i,j)*gamr(i,j),  &
+     &           1.0_r8),0.0_r8)
             odiss(i,j)=odiss(i,j)+Hz(i,j,k)*                            &
      &                   COSH(2.0_r8*pi*cff2)
           END DO

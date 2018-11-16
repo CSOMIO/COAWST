@@ -948,10 +948,12 @@
      &                           FCK(i,k+1)*tke(i,j,k+1,nnew))
           END DO
           tke(i,j,1,nnew)=tke(i,j,1,nnew)-cff*tke_fluxb(i)
+          tke(i,j,1,nnew)=MAX(tke(i,j,1,nnew),gls_Kmin(ng))
         END DO
         DO k=2,N(ng)-1
           DO i=Istr,Iend
             tke(i,j,k,nnew)=tke(i,j,k,nnew)-CF(i,k)*tke(i,j,k-1,nnew)
+            tke(i,j,k,nnew)=MAX(tke(i,j,k,nnew),gls_Kmin(ng))
           END DO
         END DO
 !

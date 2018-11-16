@@ -120,8 +120,8 @@
 #  else
             bndtot=WAVES(ng)%bndwave(tidx)
 #  endif
-            BOUNDARY(ng)%zeta_west(j)=BOUNDARY(ng)%zeta_west(j)+        &
-     &                                bndtot*ramp
+            BOUNDARY(ng)%zeta_west(j)=(BOUNDARY(ng)%zeta_west(j)+       &
+     &                                 bndtot)*ramp
           END DO
         END IF
       END IF
@@ -160,8 +160,8 @@
 #  else
             bndtot=WAVES(ng)%bndwave(tidx)
 #  endif
-            BOUNDARY(ng)%zeta_east(j)=BOUNDARY(ng)%zeta_east(j)+        &
-     &                                bndtot*ramp
+            BOUNDARY(ng)%zeta_east(j)=(BOUNDARY(ng)%zeta_east(j)+       &
+     &                                 bndtot)*ramp
           END DO
         END IF
       END IF
@@ -199,8 +199,8 @@
 #  else
             bndtot=WAVES(ng)%bndwave(tidx)
 #  endif
-            BOUNDARY(ng)%zeta_south(i)=BOUNDARY(ng)%zeta_south(i)+      &
-     &                                bndtot*ramp
+            BOUNDARY(ng)%zeta_south(i)=(BOUNDARY(ng)%zeta_south(i)+     &
+     &                                  bndtot)*ramp
           END DO
         END IF
       END IF
@@ -239,8 +239,8 @@
 #  else
             bndtot=WAVES(ng)%bndwave(tidx)
 #  endif
-            BOUNDARY(ng)%zeta_north(i)=BOUNDARY(ng)%zeta_north(i)+      &
-     &                                bndtot*ramp
+            BOUNDARY(ng)%zeta_north(i)=(BOUNDARY(ng)%zeta_north(i)+     &
+     &                                  bndtot)*ramp
           END DO
         END IF
       END IF

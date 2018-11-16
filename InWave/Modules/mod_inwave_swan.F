@@ -1,4 +1,6 @@
 #include "cppdefs.h"
+#define AMPZETAFILT
+
       MODULE mod_inwave_swan
 !
 !svn $Id: swan_reader.F 1336 2008-01-24 02:45:56Z jcwarner $
@@ -178,9 +180,10 @@
 
 !  Local variable declarations.
 
-      integer :: i, dir_index, numavg, numavgh
+      integer :: i, j, dir_index, numavg, numavgh, start
+      integer, allocatable :: peaks(:)
       real(r8) :: cff
-      real(r8), allocatable :: zeta_filt(:)
+      real(r8), allocatable :: zeta_filt(:), zeta_filt2(:)
 !
 !-----------------------------------------------------------------------
 ! Read swan output spectra
@@ -234,6 +237,70 @@
 !-----------------------------------------------------------------------
 !
       allocate (zeta_filt(WAVES(ng)%Insteps))
+#ifdef AMPZETAFILT
+      allocate (zeta_filt2(WAVES(ng)%Insteps))
+!  find peaks of
+      allocate (peaks(WAVES(ng)%Insteps))
+      DO i=1,WAVES(ng)%Insteps
+        peaks(i)=0
+        zeta_filt(i)=WAVES(ng)%Ampzeta_tot(i)
+      END DO
+! 
+      peaks(1)=1
+      peaks(2)=0
+      peaks(WAVES(ng)%Insteps-1)=0
+      peaks(WAVES(ng)%Insteps  )=1
+      DO i=3,WAVES(ng)%Insteps-2
+        IF ((WAVES(ng)%Ampzeta_tot(i).gt.WAVES(ng)%Ampzeta_tot(i-1))    &
+     &    .and.(WAVES(ng)%Ampzeta_tot(i).gt.WAVES(ng)%Ampzeta_tot(i+1)))&
+     &    THEN
+          peaks(i)=1
+        ELSE
+          peaks(i)=0
+        END IF
+      END DO
+!
+      start=2
+      DO i=3,WAVES(ng)%Insteps-2
+        IF (peaks(i).eq.1) THEN
+          DO j=start,i-1
+            zeta_filt(j)=(WAVES(ng)%Ampzeta_tot(i)-                     &
+     &                    WAVES(ng)%Ampzeta_tot(start))/                &
+     &                    REAL((i-start),r8)*REAL(j-start,r8)+          &
+     &                    WAVES(ng)%Ampzeta_tot(start)
+          END DO
+          start=i
+        ELSE
+        END IF
+      END DO
+      DO i=1,WAVES(ng)%Insteps
+        zeta_filt2(i)=zeta_filt(i)
+      END DO
+!
+! do a filter on zeta_filt
+!
+      cff=0.0_r8
+      numavg=INT(30.0_r8/dt(ng))
+      numavg=numavg-1*(1-MOD(numavg,2)) !force odd
+      DO i=1,numavg
+        cff=cff+zeta_filt(i)
+      ENDDO
+      numavgh=(numavg-1)/2
+      DO i=numavgh+1,WAVES(ng)%Insteps-numavgh
+        zeta_filt2(i)=cff/REAL(numavg,r8)
+        cff=cff-zeta_filt(i-numavgh)+zeta_filt(i+numavgh)
+      ENDDO
+!
+      DO dir_index=1,ND
+        DO i=1,WAVES(ng)%Insteps
+          WAVES(ng)%Ampzeta(i,dir_index)=0.5_r8*g*rho0*                 &
+     &                                   (zeta_filt2(i)*                &
+     &                                   WAVES(ng)%SDD(dir_index)/      &
+     &                                   WAVES(ng)%int)**2.0_r8
+        ENDDO
+      ENDDO
+      deallocate (peaks, zeta_filt2)
+#else
       DO dir_index=1,ND
         DO i=1,WAVES(ng)%Insteps
           WAVES(ng)%Ampzeta(i,dir_index)=0.5_r8*g*rho0*                 &
@@ -255,6 +322,7 @@
           cff=cff-zeta_filt(i-numavgh)+zeta_filt(i+numavgh)
         ENDDO
       ENDDO
+#endif
       deallocate (zeta_filt)
 
       RETURN

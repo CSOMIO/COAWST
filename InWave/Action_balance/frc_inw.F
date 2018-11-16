@@ -58,7 +58,7 @@
 #  endif
      &                 WAVEP(ng)% AC, WAVEP(ng)% Tr,                    &
      &                 WAVEP(ng)% Ta, WAVEP(ng)% kwc,                   &
-     &                 WAVEG(ng) % WD,                                  &
+     &                 WAVEG(ng)% WD,                                   &
      &                 WAVEP(ng) % h_tot)
 !#  ifdef PROFILE
 !      CALL wclock_off (ng, iNLM, 35)
@@ -147,7 +147,7 @@
 !
       integer :: i, j, d
       real(r8) :: TRM, H, DIRE, DIRN, twopi
-      real(r8) :: EN, EW, KM, DwaveE, DwaveN
+      real(r8) :: EN, EW, oEW, KM, DwaveE, DwaveN
       real(r8), parameter :: Lmin=10.0_r8
       real(r8), parameter :: Lmax=1000.0_r8
       real(r8), parameter :: Pmin=2.0_r8
@@ -198,10 +198,12 @@
               DIRN=DIRN+cos(WD(d))*EN
             ENDDO
             IF (EW.ge.0.001_r8) THEN
-              KM=KM/EW
+              oEW=1.0_r8/EW
+              KM=KM*oEW
+              TRM=TRM*oEW
               Lwave(i,j)=MIN(twopi/KM,Lmax)
-              DwaveE=DIRE/EW
-              DwaveN=DIRN/EW
+              DwaveE=DIRE*oEW
+              DwaveN=DIRN*oEW
               Dwave(i,j)=ATAN2(DwaveE,DwaveN)
               IF (Dwave(i,j).lt.0.0_r8) THEN
                 Dwave(i,j)=Dwave(i,j)+2.0_r8*pi
@@ -212,10 +214,10 @@
 !             Hwave(i,j)=(8.0_r8*EW/(g*rho0))**0.5_r8
               Hwave(i,j)=(16.0_r8*EW/(g*rho0))**0.5_r8
 #  if defined WAVES_TOP_PERIOD
-              Pwave_top(i,j)=TRM/EW
+              Pwave_top(i,j)=TRM
 #  endif
 #  if defined WAVES_BOT_PERIOD
-              Pwave_bot(i,j)=TRM/EW
+              Pwave_bot(i,j)=TRM
 #  endif
 #  if defined WAVES_UB
               Fwave_bot=twopi/MAX(Pwave_bot(i,j),0.05_r8)
