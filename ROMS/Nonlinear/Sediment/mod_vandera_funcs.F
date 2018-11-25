@@ -253,7 +253,7 @@
 ! directly from the current stresses. 
 ! 
       real(r8), parameter :: eps=1.0E-14_r8
-      real(r8), parameter :: min_udelta=1.0E-5_r8
+      real(r8), parameter :: min_udelta=1.0E-4_r8
       real(r8) :: udelta, mag_bstrc
 ! 
       IF(udelta.lt.min_udelta) THEN
@@ -261,6 +261,7 @@
       ELSE
         !fd_calc_new=MAX((mag_bstrc/(0.5_r8*udelta*udelta*rho0)),eps)
         fd_calc_new=MAX((mag_bstrc/(0.5_r8*udelta*udelta)),eps)
+        fd_calc_new=MIN(fd_calc_new,2.0_r8) 
       ENDIF
 !     
       RETURN

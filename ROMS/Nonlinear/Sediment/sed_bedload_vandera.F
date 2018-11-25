@@ -1149,6 +1149,7 @@
       real(r8), parameter :: m_fac=11.0_r8, n_fac=1.2_r8
       real(r8), parameter :: alpha_fac=8.2_r8
       real(r8), parameter :: xi=1.7_r8 ! Based on Santoss_core.m
+      real(r8), parameter :: eps=1.0E-14_r8
       real(r8) :: eps_eff
       real(r8) :: om_i
       real(r8) :: theta_diff, theta_ieff, theta_cr
@@ -1225,13 +1226,13 @@
 !
 ! VA2013 Equation 23-26, Sandload entrained during half cycle 
  
-      IF(P.lt.0.00001_r8) THEN
+      IF(P.lt.eps) THEN
  
 ! This is Taran's addition if there are no waves then phase lag=0.0
 ! 
         om_ii=1.0_r8 
         om_iy=0.0_r8
-      ELSEIF(P.gt.0.00001_r8.and.P.lt.1.0_r8) THEN
+      ELSEIF(P.gt.eps.and.P.lt.1.0_r8) THEN
         om_ii=om_i
         om_iy=0.0_r8
       ELSE
@@ -1335,7 +1336,7 @@
 # if defined BEDLOAD_VANDERA_MADSEN 
       fd=fd_calc_new(udelta, mag_bstrc)
 # endif 
-
+!
       DO iter=1,total_iters
 ! 
 ! Calculate wave related bed roughness from VA2013 A.5     

@@ -327,31 +327,64 @@
 !-----------------------------------------------------------------------
 !
       twopi=2.0_r8*pi
+!
+! Height at which near-bottom current velocity is calculated 
+!
+      sg_z1min=0.1_r8 
 
       DO j=JstrV-1,Jend+1
         DO i=IstrU-1,Iend+1
+!
+! Calculate bottom cell thickness
+!
           Zr(i,j)=z_r(i,j,1)-z_w(i,j,0)
           Ur_sg(i,j)=u(i,j,1,nrhs)
           Vr_sg(i,j)=v(i,j,1,nrhs)
+!
 #ifdef SSW_LOGINT
 !
-!  If current height is less than z1ur, interpolate logarithmically
-!  to z1ur. (This has not been updated wrt ssw...uses outdated zo defs)
-!
-          IF (Zr(i,j).lt.sg_z1min) THEN
-            DO k=2,N(ng)
+!  If chosen height to get near bottom-current velocity lies
+!  within any vertical level, perform logarithmic interpolation. 
+!                 
+          IF ( sg_z1min.ge.Zr(i,j) ) THEN
+10          DO k=2,N(ng)
               z1=z_r(i,j,k-1)-z_w(i,j,0)
               z2=z_r(i,j,k  )-z_w(i,j,0)
-              IF ((z1.lt.sg_z1min).and.(sg_z1min.lt.z2)) THEN
+              IF ( ( z1.le.sg_z1min ).and.( sg_z1min.lt.z2 )) THEN
                 fac=1.0_r8/LOG(z2/z1)
                 fac1=fac*LOG(z2/sg_z1min)
                 fac2=fac*LOG(sg_z1min/z1)
                 Ur_sg(i,j)=fac1*u(i,j,k-1,nrhs)+fac2*u(i,j,k,nrhs)
                 Vr_sg(i,j)=fac1*v(i,j,k-1,nrhs)+fac2*v(i,j,k,nrhs)
-                Zr(i,j)=sg_z1min
+!
+! If chosen height is greater than the depth 
+! then modify the the sg_z1min, then perform the logarithmic interpolation
+!
+              ELSEIF ( sg_z1min.gt.z2 ) THEN 
+!
+! modify sg_z1min 
+!
+                sg_z1min=MIN(sg_z1min, 0.4_r8*z2)
+                goto 10 
               END IF
+!
             END DO
-          END IF
+!
+          ELSEIF (Zr(i,j).gt.sg_z1min) THEN 
+!
+! This means that bottom cell size is greater than sg_z1min 
+! perform linear interpolation. 
+! 
+            z1=sg_z1min
+            z2=Zr(i,j)
+            fac=z1/z2
+            Ur_sg(i,j)=fac*u(i,j,1,nrhs)
+            Vr_sg(i,j)=fac*v(i,j,1,nrhs)
+          END IF 
+!
+! Check with CRS 
+!
+          Zr(i,j)=sg_z1min
 #endif
         END DO
       END DO
@@ -385,6 +418,7 @@
 !
           Ucur(i,j)=0.5_r8*(Ur_sg(i,j)+Ur_sg(i+1,j))
           Vcur(i,j)=0.5_r8*(Vr_sg(i,j)+Vr_sg(i,j+1))
+!
           Umag(i,j)=SQRT(Ucur(i,j)*Ucur(i,j)+Vcur(i,j)*Vcur(i,j)+eps)
 !
 !  Compute angle between currents and waves (radians)
@@ -669,11 +703,11 @@
             END IF
 #endif
 #if defined BEDLOAD_VANDERA_MADSEN
-            ksd_wbl(i,j)=znotc(i,j)
+            ksd_wbl(i,j)=m_zoa
             ustrc_wbl(i,j)=ABS(m_ustrc)
             thck_wbl(i,j)=m_dwc
-            udelta_wbl(i,j)=MAX( ((ustrc_wbl(i,j)/vonKar)*              &
-     &                             LOG(m_dwc/ksd_wbl(i,j))) ,eps)
+            cff=LOG( MAX( (thck_wbl(i,j)/ksd_wbl(i,j)),1.0_r8 ) )
+            udelta_wbl(i,j)=(ustrc_wbl(i,j)/vonKar)*cff
 #endif  
           END IF
         END DO
