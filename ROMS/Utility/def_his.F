@@ -5017,7 +5017,44 @@
             got_var(idWdiw)=.TRUE.
             HIS(ng)%Vid(idWdiw)=var_id(i)
 #endif
-
+#ifdef BEDLOAD_VANDERA
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsurs))) THEN
+            got_var(idsurs)=.TRUE.
+            HIS(ng)%Vid(idsurs)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsrrw))) THEN
+            got_var(idsrrw)=.TRUE.
+            HIS(ng)%Vid(idsrrw)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsbtw))) THEN
+            got_var(idsbtw)=.TRUE.
+            HIS(ng)%Vid(idsbtw)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsksd))) THEN
+            got_var(idsksd)=.TRUE.
+            HIS(ng)%Vid(idsksd)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsusc))) THEN
+            got_var(idsusc)=.TRUE.
+            HIS(ng)%Vid(idsusc)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsubl))) THEN
+            got_var(idsubl)=.TRUE.
+            HIS(ng)%Vid(idsubl)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idstbl))) THEN
+            got_var(idstbl)=.TRUE.
+            HIS(ng)%Vid(idstbl)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsfdw))) THEN
+            got_var(idsfdw)=.TRUE.
+            HIS(ng)%Vid(idsfdw)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsucr))) THEN
+            got_var(idsucr)=.TRUE.
+            HIS(ng)%Vid(idsucr)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsutr))) THEN
+            got_var(idsutr)=.TRUE.
+            HIS(ng)%Vid(idsutr)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idstcr))) THEN
+            got_var(idstcr)=.TRUE.
+            HIS(ng)%Vid(idstcr)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsttr))) THEN
+            got_var(idsttr)=.TRUE.
+            HIS(ng)%Vid(idsttr)=var_id(i)
+#endif
           END IF
 !
 #if defined VEGETATION 
@@ -5489,6 +5526,82 @@
           exit_flag=3
           RETURN
         END IF
+
+
+#ifdef BEDLOAD_VANDERA
+        IF (.not.got_var(idsurs).and.Hout(idsurs,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsurs)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsrrw).and.Hout(idsrrw,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsrrw)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsbtw).and.Hout(idsbtw,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsbtw)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsksd).and.Hout(idsksd,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsksd)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsusc).and.Hout(idsusc,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsusc)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsubl).and.Hout(idsubl,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsubl)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idstbl).and.Hout(idstbl,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idstbl)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsfdw).and.Hout(idsfdw,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsfdw)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsucr).and.Hout(idsucr,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsucr)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsutr).and.Hout(idsutr,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsutr)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idstcr).and.Hout(idstcr,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idstcr)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idsttr).and.Hout(idsttr,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idsttr)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+#endif
 #ifdef SOLVE3D
 # ifdef INWAVE_MODEL
         IF (.not.got_var(idACen).and.Hout(idACen,ng)) THEN
