@@ -742,7 +742,7 @@
      &              (cff2*FX_r(i  ,j)+                                  &
      &               cff1*0.5_r8*(FX_r(i-1,j)+FX_r(i,j)))
 #  ifdef SLOPE_KIRWAN
-            cff1=30.0_r8
+            cff1=10.0_r8
             dzdx=(h(i,j)-h(i-1  ,j))/om_u(i,j)
             a_slopex=(MAX(0.0_r8,abs(dzdx)-0.05_r8)                     &
      &               *SIGN(1.0_r8,dzdx)*cff1)                           &
@@ -771,7 +771,7 @@
      &              (cff2*FE_r(i  ,j)+                                  &
      &               cff1*0.5_r8*(FE_r(i,j-1)+FE_r(i,j)))
 #  ifdef SLOPE_KIRWAN
-            cff1=30.0_r8
+            cff1=10.0_r8
             dzdy=(h(i,j)-h(i  ,j-1))/on_v(i,j)
             a_slopey=(MAX(0.0_r8,abs(dzdy)-0.05_r8)                     &
      &               *SIGN(1.0_r8,dzdy)*cff1)                           &
@@ -800,8 +800,8 @@
 !       slopefac are the scale factors for sediment movement.
 !
         cff2=Srho(ised,ng)*(1.0_r8-bed(i,j,1,iporo))
-        slopefac_dry=cff2*0.001_r8  !  kirwan 10 bedcoeff .2, still too much eros
-        slopefac_wet=cff2*0.001_r8  !  
+        slopefac_dry=cff2*0.02_r8
+        slopefac_wet=cff2*0.02_r8
 !
 #   ifdef SED_MORPH
         slopefac_wet=slopefac_wet*morph_fac(ised,ng)
@@ -842,6 +842,12 @@
 #   endif
 #  endif
             FX(i,j)=FX(i,j)+cff2
+
+#  ifdef BEDLOAD_VANDERA_LIMIT
+            cff=0.5_r8/dt(ng)*FX(i,j)*(pn(i-1,j)+pn(i,j))
+            FX(i,j)=MIN(ABS(cff),20.0_r8)*SIGN(1.0_r8,cff)
+#  endif
+
 !
 !  For the lateral shear.
 !
@@ -896,6 +902,10 @@
 #   endif
 #  endif
             FE(i,j)=FE(i,j)+cff2
+#  ifdef BEDLOAD_VANDERA_LIMIT
+            cff=0.5_r8/dt(ng)*FE(i,j)*(pm(i,j)+pm(i,j-1))
+            FE(i,j)=MIN(ABS(cff),20.0_r8)*SIGN(1.0_r8,cff)
+#  endif
           END DO
         END DO
 #  endif
