@@ -401,7 +401,6 @@
             depth=h(i,j)+zeta(i,j,1)            ! (m)
             Td=MAX(Pwave_bot(i,j),1.0_r8)       ! (s)
             urms=Uwave_rms(i,j)                 ! (m/s)
-            umag_curr=SQRT(Ur(i,j)*Ur(i,j)+Vr(i,j)*Vr(i,j))
             phi_curwave=phi_wc(i,j)
 ! 
 ! Compute magnitude of stress for computing current velocity 
@@ -454,6 +453,10 @@
 !
             smgd=(rhos/rho0-1.0_r8)*g*d50
             osmgd=1.0_r8/smgd
+!
+# ifdef BEDLOAD_VANDERA_NOCURR
+            udelta_wbl(i,j)=0.0_r8
+# endif
 ! 
 ! Full wave cycle 
 ! 
@@ -1334,7 +1337,11 @@
       theta_timeavg_old=0.0_r8
 !
 # if defined BEDLOAD_VANDERA_MADSEN 
+#  ifdef BEDLOAD_VANDERA_NOCURR
+      fd=0.0_r8
+#  else
       fd=fd_calc_new(udelta, mag_bstrc)
+#  endif
 # endif 
 !
       DO iter=1,total_iters
