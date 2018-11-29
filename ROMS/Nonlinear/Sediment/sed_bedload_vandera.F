@@ -90,6 +90,9 @@
 # if defined SED_MORPH
      &                       SEDBED(ng) % bed_thick,                    &
 # endif
+# ifdef SED_SLUMP
+     &                       OCEAN(ng) % vbar,                          &
+# endif
      &                       SEDBED(ng) % ursell_no,                    &
      &                       SEDBED(ng) % RR_asymwave,                  &
      &                       SEDBED(ng) % beta_asymwave,                &
@@ -142,6 +145,9 @@
      &                             angler,                              &
 # if defined SED_MORPH
      &                             bed_thick,                           &
+# endif
+# ifdef SED_SLUMP
+     &                             vbar,                                &
 # endif
      &                             ursell_no,                           &
      &                             RR_asymwave, beta_asymwave,          &
@@ -206,6 +212,9 @@
 #  if defined SED_MORPH
       real(r8), intent(inout):: bed_thick(LBi:,LBj:,:)
 #  endif
+# ifdef SED_SLUMP
+      real(r8), intent(in):: vbar(LBi:,LBj:,:)
+# endif
       real(r8), intent(inout) :: ursell_no(LBi:,LBj:)
       real(r8), intent(inout) :: RR_asymwave(LBi:,LBj:)
       real(r8), intent(inout) :: beta_asymwave(LBi:,LBj:)
@@ -262,6 +271,9 @@
 #  if defined SED_MORPH
       real(r8), intent(inout):: bed_thick(LBi:UBi,LBj:UBj,2)
 #  endif
+# ifdef SED_SLUMP
+      real(r8), intent(in):: vbar(LBi:UBi,LBj:UBj,3)
+# endif
       real(r8), intent(inout) :: ursell_no(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: RR_asymwave(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: beta_asymwave(LBi:UBi,LBj:UBj)
@@ -401,6 +413,7 @@
             depth=h(i,j)+zeta(i,j,1)            ! (m)
             Td=MAX(Pwave_bot(i,j),1.0_r8)       ! (s)
             urms=Uwave_rms(i,j)                 ! (m/s)
+            umag_curr=SQRT(Ur(i,j)*Ur(i,j)+Vr(i,j)*Vr(i,j))
             phi_curwave=phi_wc(i,j)
 ! 
 ! Compute magnitude of stress for computing current velocity 
@@ -842,29 +855,31 @@
 #   endif
 #  endif
             FX(i,j)=FX(i,j)+cff2
-
 #  ifdef BEDLOAD_VANDERA_LIMIT
             cff=0.5_r8/dt(ng)*FX(i,j)*(pn(i-1,j)+pn(i,j))
             FX(i,j)=MIN(ABS(cff),20.0_r8)*SIGN(1.0_r8,cff)
 #  endif
-
 !
 !  For the lateral shear.
 !
-!            cff1=0.5_r8*(vbar(i-1,j,1)+vbar(i-1,j+1,1))
-!            cff2=0.5_r8*(vbar(i,j,1)+vbar(i,j+1,1))
-!            cff=(cff2-cff1)*0.5_r8*(pm(i-1,j)+pm(i,j))
-!!           cff2=MAX(ABS(cff)-0.25_r8,0.0_r8)
-!            cff2=MAX(ABS(cff)-0.01_r8,0.0_r8)
-!!           cff2=cff2*SIGN(1.0_r8,cff)*100.0_r8
-!            cff2=cff2*SIGN(1.0_r8,dzdx)*10.0_r8
+            cff1=0.5_r8*(vbar(i-1,j,1)+vbar(i-1,j+1,1))
+            cff2=0.5_r8*(vbar(i,j,1)+vbar(i,j+1,1))
+            cff=(cff2-cff1)*0.5_r8*(pm(i-1,j)+pm(i,j))
+!           cff2=MAX(ABS(cff)-0.25_r8,0.0_r8)
+            cff2=MAX(ABS(cff)-0.01_r8,0.0_r8)
+!           cff2=cff2*SIGN(1.0_r8,cff)*100.0_r8
+            cff2=cff2*SIGN(1.0_r8,dzdx)*0.01_r8
 #  ifdef MASKING
-!            cff2=cff2*umask(i,j)
+            cff2=cff2*umask(i,j)
 #   ifdef WET_DRY
-!            cff2=cff2*(1.0_r8-umask_wet(i,j))
+            cff2=cff2*(1.0_r8-umask_wet(i,j))
 #   endif
 #  endif
 !            FX(i,j)=FX(i,j)+cff2
+#  ifdef BEDLOAD_VANDERA_LIMIT
+            cff=0.5_r8/dt(ng)*FX(i,j)*(pn(i-1,j)+pn(i,j))
+            FX(i,j)=MIN(ABS(cff),20.0_r8)*SIGN(1.0_r8,cff)
+#  endif
           END DO
         END DO
         DO j=Jstr,Jend+1

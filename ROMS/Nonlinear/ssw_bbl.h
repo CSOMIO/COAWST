@@ -346,8 +346,8 @@
 !  If chosen height to get near bottom-current velocity lies
 !  within any vertical level, perform logarithmic interpolation. 
 !                 
-          IF ( sg_z1min.ge.Zr(i,j) ) THEN
-10          DO k=2,N(ng)
+          IF (sg_z1min.ge.Zr(i,j)) THEN
+            DO k=2,N(ng)
               z1=z_r(i,j,k-1)-z_w(i,j,0)
               z2=z_r(i,j,k  )-z_w(i,j,0)
               IF ( ( z1.le.sg_z1min ).and.( sg_z1min.lt.z2 )) THEN
@@ -356,20 +356,16 @@
                 fac2=fac*LOG(sg_z1min/z1)
                 Ur_sg(i,j)=fac1*u(i,j,k-1,nrhs)+fac2*u(i,j,k,nrhs)
                 Vr_sg(i,j)=fac1*v(i,j,k-1,nrhs)+fac2*v(i,j,k,nrhs)
-!
-! If chosen height is greater than the depth 
-! then modify the the sg_z1min, then perform the logarithmic interpolation
-!
-              ELSEIF ( sg_z1min.gt.z2 ) THEN 
+              END IF
+            END DO
+            IF (sg_z1min.gt.z2) THEN 
 !
 ! modify sg_z1min 
 !
                 sg_z1min=MIN(sg_z1min, 0.4_r8*z2)
-                goto 10 
-              END IF
-!
-            END DO
-!
+                Ur_sg(i,j)=u(i,j,1,nrhs)
+                Vr_sg(i,j)=v(i,j,1,nrhs)
+            END IF
           ELSEIF (Zr(i,j).gt.sg_z1min) THEN 
 !
 ! This means that bottom cell size is greater than sg_z1min 
@@ -381,9 +377,6 @@
             Ur_sg(i,j)=fac*u(i,j,1,nrhs)
             Vr_sg(i,j)=fac*v(i,j,1,nrhs)
           END IF 
-!
-! Check with CRS 
-!
           Zr(i,j)=sg_z1min
 #endif
         END DO
