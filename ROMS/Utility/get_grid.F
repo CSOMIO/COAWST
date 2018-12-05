@@ -228,7 +228,7 @@
 #  endif
 # endif
 # if defined UV_DRAG_GRID && !defined ANA_DRAG
-#  ifdef UV_LOGDRAG
+#  if defined UV_LOGDRAG || defined BBL_MODEL
       IF (.not.find_string(var_name,n_var,TRIM(Vname(1,idZoBL)),        &
      &                     varid_ZoBL)) THEN
         IF (Master) WRITE (stdout,20) TRIM(Vname(1,idZoBL)),            &
@@ -1780,7 +1780,7 @@
       END IF
 
 # if defined UV_DRAG_GRID && !defined ANA_DRAG
-#  ifdef UV_LOGDRAG
+#  if defined UV_LOGDRAG || defined BBL_MODEL
 !
 !  Read in spacially varying bottom roughness length (m).
 !

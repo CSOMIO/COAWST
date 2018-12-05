@@ -3664,7 +3664,7 @@
 !  Spatially varying bottom friction parameter.
 !
         IF (ncid.ne.STA(ng)%ncid) THEN
-# ifdef UV_LOGDRAG
+# if defined UV_LOGDRAG || defined BBL_MODEL
           Vinfo( 1)=Vname(1,idZoBL)
           Vinfo( 2)=Vname(2,idZoBL)
           Vinfo( 3)=Vname(3,idZoBL)
