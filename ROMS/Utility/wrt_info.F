@@ -2496,7 +2496,7 @@
         IF (exit_flag.eq.NoError) THEN
           IF (ncid.ne.STA(ng)%ncid) THEN
             scale=1.0_r8
-# ifdef UV_LOGDRAG
+# if defined UV_LOGDRAG || defined BBL_MODEL
             IF (find_string(var_name, n_var, TRIM(Vname(1,idZoBL)),     &
      &                      varid)) THEN
               status=nf_fwrite2d(ng, model, ncid, varid, 0, r2dvar,     &
