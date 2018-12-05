@@ -856,8 +856,8 @@
 #  endif
             FX(i,j)=FX(i,j)+cff2
 #  ifdef BEDLOAD_VANDERA_LIMIT
-            cff=0.5_r8/dt(ng)*FX(i,j)*(pn(i-1,j)+pn(i,j))
-            FX(i,j)=MIN(ABS(cff),20.0_r8)*SIGN(1.0_r8,cff)
+            cff=20.0_r8*2.0_r8*dt(ng)/(pn(i-1,j)+pn(i,j))
+            FX(i,j)=MIN(ABS(FX(i,j)),cff)*SIGN(1.0_r8,FX(i,j))
 #  endif
 !
 !  For the lateral shear.
@@ -877,8 +877,8 @@
 #  endif
 !            FX(i,j)=FX(i,j)+cff2
 #  ifdef BEDLOAD_VANDERA_LIMIT
-            cff=0.5_r8/dt(ng)*FX(i,j)*(pn(i-1,j)+pn(i,j))
-            FX(i,j)=MIN(ABS(cff),20.0_r8)*SIGN(1.0_r8,cff)
+            cff=20.0_r8*2.0_r8*dt(ng)/(pn(i-1,j)+pn(i,j))
+            FX(i,j)=MIN(ABS(FX(i,j)),cff)*SIGN(1.0_r8,FX(i,j))
 #  endif
           END DO
         END DO
@@ -918,8 +918,8 @@
 #  endif
             FE(i,j)=FE(i,j)+cff2
 #  ifdef BEDLOAD_VANDERA_LIMIT
-            cff=0.5_r8/dt(ng)*FE(i,j)*(pm(i,j)+pm(i,j-1))
-            FE(i,j)=MIN(ABS(cff),20.0_r8)*SIGN(1.0_r8,cff)
+            cff=20.0_r8*2.0_r8*dt(ng)/(pm(i,j)+pm(i,j-1))
+            FE(i,j)=MIN(ABS(FE(i,j)),cff)*SIGN(1.0_r8,FE(i,j))
 #  endif
           END DO
         END DO
