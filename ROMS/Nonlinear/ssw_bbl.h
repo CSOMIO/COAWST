@@ -65,12 +65,15 @@
 #endif
      &                SEDBED(ng) % bottom,                              &
      &                OCEAN(ng) % rho,                                  &
+     &                OCEAN(ng) % ubar,                                 &
+     &                OCEAN(ng) % vbar,                                 &
      &                OCEAN(ng) % u,                                    &
      &                OCEAN(ng) % v,                                    &
 #if defined SSW_CALC_UB
      &                OCEAN(ng) % zeta,                                 &
 #endif
 #if defined BEDLOAD_VANDERA_MADSEN 
+     &                SEDBED(ng) % Zr_wbl,                              &
      &                SEDBED(ng) % ksd_wbl,                             &
      &                SEDBED(ng) % ustrc_wbl,                           &
      &                SEDBED(ng) % thck_wbl,                            &
@@ -111,12 +114,13 @@
 #ifdef BEDLOAD
      &                      bedldu, bedldv,                             &
 #endif
-     &                      bottom, rho, u, v,                          &
+     &                      bottom, rho,                                &
+     &                      ubar, vbar, u, v,                           &
 #if defined SSW_CALC_UB
      &                      zeta,                                       &
 #endif
 #if defined BEDLOAD_VANDERA_MADSEN 
-     &                      ksd_wbl, ustrc_wbl,                         &
+     &                      Zr_wbl, ksd_wbl, ustrc_wbl,                 &
      &                      thck_wbl, udelta_wbl, fd_wbl,               &
 #endif 
      &                      Iconv,                                      &
@@ -166,12 +170,15 @@
 # endif
       real(r8), intent(inout) :: bottom(LBi:,LBj:,:)
       real(r8), intent(in) :: rho(LBi:,LBj:,:)
+      real(r8), intent(in) :: ubar(LBi:,LBj:,:)
+      real(r8), intent(in) :: vbar(LBi:,LBj:,:)
       real(r8), intent(in) :: u(LBi:,LBj:,:,:)
       real(r8), intent(in) :: v(LBi:,LBj:,:,:)
 #if defined SSW_CALC_UB
       real(r8), intent(in) :: zeta(LBi:,LBj:,:)
 #endif
-#if defined BEDLOAD_VANDERA_MADSEN
+# if defined BEDLOAD_VANDERA_MADSEN
+      real(r8), intent(inout) :: Zr_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: ksd_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: ustrc_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: thck_wbl(LBi:,LBj:)
@@ -211,12 +218,15 @@
 # endif
       real(r8), intent(inout) :: bottom(LBi:UBi,LBj:UBj,MBOTP)
       real(r8), intent(in) :: rho(LBi:UBi,LBj:UBj,N(ng))
+      real(r8), intent(in) :: ubar(LBi:UBi,LBj:UBj,3)
+      real(r8), intent(in) :: vbar(LBi:UBi,LBj:UBj,3)
       real(r8), intent(in) :: u(LBi:UBi,LBj:UBj,N(ng),2)
       real(r8), intent(in) :: v(LBi:UBi,LBj:UBj,N(ng),2)
 #if defined SSW_CALC_UB
       real(r8), intent(in) :: zeta(LBi:UBi,LBj:UBj,3)
 #endif
-#if defined BEDLOAD_VANDERA_MADSEN
+# if defined BEDLOAD_VANDERA_MADSEN
+      real(r8), intent(inout) :: Zr_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: ksd_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: ustrc_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: thck_wbl(LBi:UBi,LBj:UBj)
@@ -318,9 +328,6 @@
 
 #include "set_bounds.h"
 
-      m_zoa=1000000000.0_r8
-      m_dwc=0.0_r8
-      m_ustrr=0.0_r8
 !
 !-----------------------------------------------------------------------
 !  Set currents above the bed.
@@ -340,13 +347,16 @@
           Zr(i,j)=z_r(i,j,1)-z_w(i,j,0)
           Ur_sg(i,j)=u(i,j,1,nrhs)
           Vr_sg(i,j)=v(i,j,1,nrhs)
+
+#ifdef SSW_LOGINT 
 !
-#ifdef SSW_LOGINT
+! If chosen height is greater than the bottom cell thickness.
+!
+          IF ( sg_z1min.ge.Zr(i,j) ) THEN
 !
 !  If chosen height to get near bottom-current velocity lies
 !  within any vertical level, perform logarithmic interpolation. 
 !                 
-          IF (sg_z1min.ge.Zr(i,j)) THEN
             DO k=2,N(ng)
               z1=z_r(i,j,k-1)-z_w(i,j,0)
               z2=z_r(i,j,k  )-z_w(i,j,0)
@@ -356,29 +366,54 @@
                 fac2=fac*LOG(sg_z1min/z1)
                 Ur_sg(i,j)=fac1*u(i,j,k-1,nrhs)+fac2*u(i,j,k,nrhs)
                 Vr_sg(i,j)=fac1*v(i,j,k-1,nrhs)+fac2*v(i,j,k,nrhs)
+                Zr(i,j)=sg_z1min
+              ENDIF
+!
+! If chosen height is greater than the depth 
+! then modify the the sg_z1min, then perform the logarithmic interpolation.
+!
+              IF ( sg_z1min.gt.z2 ) THEN
+                Ur_sg(i,j)=ubar(i,j,nrhs)
+                Vr_sg(i,j)=vbar(i,j,nrhs)
+                Zr(i,j)=0.4_r8*z2
               END IF
+!
             END DO
-            IF (sg_z1min.gt.z2) THEN 
 !
-! modify sg_z1min 
-!
-                sg_z1min=MIN(sg_z1min, 0.4_r8*z2)
-                Ur_sg(i,j)=u(i,j,1,nrhs)
-                Vr_sg(i,j)=v(i,j,1,nrhs)
-            END IF
-          ELSEIF (Zr(i,j).gt.sg_z1min) THEN 
-!
-! This means that bottom cell size is greater than sg_z1min 
-! perform linear interpolation. 
-! 
-            z1=sg_z1min
+          ELSEIF ( sg_z1min.lt.Zr(i,j) ) THEN
+            d50=bottom(i,j,isd50)
+            z1=MAX( 2.5_r8*d50/30.0_r8, bottom(i,j,izapp) )
             z2=Zr(i,j)
-            fac=z1/z2
-            Ur_sg(i,j)=fac*u(i,j,1,nrhs)
-            Vr_sg(i,j)=fac*v(i,j,1,nrhs)
-          END IF 
-          Zr(i,j)=sg_z1min
+!            write(59,*),iic(ng),i,j,"z1",z1
+!
+!
+            IF ( sg_z1min.lt.z1 ) THEN  
+!
+! If chosen height is less than the bottom roughness 
+! perform linear interpolation. 
+!
+              z1=sg_z1min
+              fac=z1/z2
+              Ur_sg(i,j)=fac*u(i,j,1,nrhs)
+              Vr_sg(i,j)=fac*v(i,j,1,nrhs)
+              Zr(i,j)=sg_z1min
+!
+            ELSEIF ( sg_z1min.gt.z1 ) THEN   
+!
+! If chosen height is less than the bottom cell thickness 
+! perform logarithmic interpolation with bottom roughness. 
+!
+              fac=1.0_r8/LOG(z2/z1)
+              fac2=fac*LOG(sg_z1min/z1)
+              Ur_sg(i,j)=fac2*u(i,j,1,nrhs)
+              Vr_sg(i,j)=fac2*v(i,j,1,nrhs)
+              Zr(i,j)=sg_z1min
+            END IF 
+!
+          END IF
+!
 #endif
+          Zr_wbl(i,j)=Zr(i,j)
         END DO
       END DO
 !
@@ -701,6 +736,9 @@
             thck_wbl(i,j)=m_dwc
             cff=LOG( MAX( (thck_wbl(i,j)/ksd_wbl(i,j)),1.0_r8 ) )
             udelta_wbl(i,j)=(ustrc_wbl(i,j)/vonKar)*cff
+# ifdef BEDLOAD_VANDERA_NOCURR
+            udelta_wbl(i,j)=0.0_r8
+# endif
 #endif  
           END IF
         END DO
