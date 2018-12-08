@@ -247,7 +247,7 @@
 #if defined ANA_DRAG && defined UV_DRAG_GRID
 !
       IF (Master) WRITE (stdout,20) 'ANA_DRAG_GRID',                    &
-# if defined UV_LOGDRAG
+# if defined UV_LOGDRAG || defined BBL_MODEL
      &   'Analytical spatially varying bottom roughness length.'
 # elif defined UV_LDRAG
      &   'Analytical spatially varying linear drag coefficient.'
@@ -3304,7 +3304,7 @@
 #ifdef UV_DRAG_GRID
 !
       IF (Master) WRITE (stdout,20) 'UV_DRAG_GRID',                     &
-# if defined UV_LOGDRAG
+# if defined UV_LOGDRAG || defined BBL_MODEL
      &   'Spatially varying bottom roughness length.'
 # elif defined UV_LDRAG
      &   'Spatially varying linear drag coefficient.'
