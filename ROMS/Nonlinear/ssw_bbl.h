@@ -69,10 +69,17 @@
      &                OCEAN(ng) % vbar,                                 &
      &                OCEAN(ng) % u,                                    &
      &                OCEAN(ng) % v,                                    &
+#if defined BEDLOAD_VANDERA_STOKES 
+     &                OCEAN(ng) % ubar_stokes,                          &
+     &                OCEAN(ng) % vbar_stokes,                          &
+     &                OCEAN(ng) % u_stokes,                             &
+     &                OCEAN(ng) % v_stokes,                             &
+#endif 
 #if defined SSW_CALC_UB
      &                OCEAN(ng) % zeta,                                 &
 #endif
 #if defined BEDLOAD_VANDERA_MADSEN
+!    &                SEDBED(ng) % Zr_wbl,                              &
      &                SEDBED(ng) % ksd_wbl,                             &
      &                SEDBED(ng) % ustrc_wbl,                           &
      &                SEDBED(ng) % thck_wbl,                            &
@@ -115,10 +122,15 @@
 #endif
      &                      bottom, rho,                                &
      &                      ubar, vbar, u, v,                           &
+#if defined BEDLOAD_VANDERA_STOKES
+     &                      ubar_stokes, vbar_stokes,                   &
+     &                      u_stokes, v_stokes,                         &
+#endif
 #if defined SSW_CALC_UB
      &                      zeta,                                       &
 #endif
 #if defined BEDLOAD_VANDERA_MADSEN
+!    &                      Zr_wbl, ksd_wbl, ustrc_wbl,                 &
      &                      ksd_wbl, ustrc_wbl,                         &
      &                      thck_wbl, udelta_wbl, fd_wbl,               &
 #endif
@@ -173,16 +185,23 @@
       real(r8), intent(in) :: vbar(LBi:,LBj:,:)
       real(r8), intent(in) :: u(LBi:,LBj:,:,:)
       real(r8), intent(in) :: v(LBi:,LBj:,:,:)
-#if defined SSW_CALC_UB
+# if defined BEDLOAD_VANDERA_STOKES
+      real(r8), intent(in) :: ubar_stokes(LBi:,LBj:)
+      real(r8), intent(in) :: vbar_stokes(LBi:,LBj:)
+      real(r8), intent(in) :: u_stokes(LBi:,LBj:,:)
+      real(r8), intent(in) :: v_stokes(LBi:,LBj:,:)
+# endif
+# if defined SSW_CALC_UB
       real(r8), intent(in) :: zeta(LBi:,LBj:,:)
-#endif
+# endif
 # if defined BEDLOAD_VANDERA_MADSEN
+!     real(r8), intent(inout) :: Zr_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: ksd_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: ustrc_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: thck_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: udelta_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: fd_wbl(LBi:,LBj:)
-#endif
+# endif
       real(r8), intent(out) :: Ubot(LBi:,LBj:)
       real(r8), intent(out) :: Vbot(LBi:,LBj:)
       real(r8), intent(out) :: Ur(LBi:,LBj:)
@@ -220,16 +239,23 @@
       real(r8), intent(in) :: vbar(LBi:UBi,LBj:UBj,3)
       real(r8), intent(in) :: u(LBi:UBi,LBj:UBj,N(ng),2)
       real(r8), intent(in) :: v(LBi:UBi,LBj:UBj,N(ng),2)
-#if defined SSW_CALC_UB
+# if defined BEDLOAD_VANDEARA_STOKES
+      real(r8), intent(in) :: ubar_stokes(LBi:UBi,LBj:UBj)
+      real(r8), intent(in) :: vbar_stokes(LBi:UBi,LBj:UBj)
+      real(r8), intent(in) :: u_stokes(LBi:UBi,LBj:UBj,N(ng))
+      real(r8), intent(in) :: v_stokes(LBi:UBi,LBj:UBj,N(ng))
+# endif
+# if defined SSW_CALC_UB
       real(r8), intent(in) :: zeta(LBi:UBi,LBj:UBj,3)
-#endif
+# endif
 # if defined BEDLOAD_VANDERA_MADSEN
+!     real(r8), intent(inout) :: Zr_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: ksd_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: ustrc_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: thck_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: udelta_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: fd_wbl(LBi:UBi,LBj:UBj)
-#endif
+# endif
       real(r8), intent(out) :: Ubot(LBi:UBi,LBj:UBj)
       real(r8), intent(out) :: Vbot(LBi:UBi,LBj:UBj)
       real(r8), intent(out) :: Ur(LBi:UBi,LBj:UBj)
@@ -325,6 +351,9 @@
 
 #include "set_bounds.h"
 
+!      m_zoa=1000000000.0_r8 
+!      m_dwc=0.0_r8 
+!      m_ustrr=0.0_r8
 !
 !-----------------------------------------------------------------------
 !  Set currents above the bed.
@@ -361,8 +390,21 @@
                 fac=1.0_r8/LOG(z2/z1)
                 fac1=fac*LOG(z2/sg_z1min)
                 fac2=fac*LOG(sg_z1min/z1)
+!
+# ifdef BEDLOAD_VANDERA_STOKES
+                Ur_sg(i,j)=fac1*( u(i,j,k-1,nrhs)+                      &
+     &                            u_stokes(i,j,k-1) )+                  &
+     &                     fac2*( u(i,j,k,nrhs)+                        & 
+     &                            u_stokes(i,j,k)   )
+                Vr_sg(i,j)=fac1*( v(i,j,k-1,nrhs)+                      &  
+     &                            v_stokes(i,j,k-1) )+                  &
+     &                     fac2*( v(i,j,k,nrhs)+                        &
+     &                            v_stokes(i,j,k)   )
+# else
                 Ur_sg(i,j)=fac1*u(i,j,k-1,nrhs)+fac2*u(i,j,k,nrhs)
                 Vr_sg(i,j)=fac1*v(i,j,k-1,nrhs)+fac2*v(i,j,k,nrhs)
+# endif
+! 
                 Zr(i,j)=sg_z1min
               ENDIF
 !
@@ -370,8 +412,15 @@
 ! then modify the the sg_z1min, then perform the logarithmic interpolation.
 !
               IF ( sg_z1min.gt.z2 ) THEN
+!
+# ifdef BEDLOAD_VANDERA_STOKES
+                Ur_sg(i,j)=ubar(i,j,nrhs)+ubar_stokes(i,j)
+                Vr_sg(i,j)=vbar(i,j,nrhs)+vbar_stokes(i,j)
+# else
                 Ur_sg(i,j)=ubar(i,j,nrhs)
                 Vr_sg(i,j)=vbar(i,j,nrhs)
+# endif 
+!
                 Zr(i,j)=0.4_r8*z2
               END IF
 !
@@ -383,16 +432,21 @@
             z2=Zr(i,j)
 !            write(59,*),iic(ng),i,j,"z1",z1
 !
-!
-            IF ( sg_z1min.lt.z1 ) THEN
+            IF ( sg_z1min.lt.z1 ) THEN  
 !
 ! If chosen height is less than the bottom roughness
 ! perform linear interpolation.
 !
               z1=sg_z1min
               fac=z1/z2
+!
+# ifdef BEDLOAD_VANDERA_STOKES
+              Ur_sg(i,j)=fac*(u(i,j,1,nrhs)+u_stokes(i,j,1))  
+              Vr_sg(i,j)=fac*(v(i,j,1,nrhs)+v_stokes(i,j,1))  
+# else
               Ur_sg(i,j)=fac*u(i,j,1,nrhs)
               Vr_sg(i,j)=fac*v(i,j,1,nrhs)
+# endif
               Zr(i,j)=sg_z1min
 !
             ELSEIF ( sg_z1min.gt.z1 ) THEN
@@ -402,13 +456,21 @@
 !
               fac=1.0_r8/LOG(z2/z1)
               fac2=fac*LOG(sg_z1min/z1)
+!
+# ifdef BEDLOAD_VANDERA_STOKES
+              Ur_sg(i,j)=fac2*(u(i,j,1,nrhs)+u_stokes(i,j,1))
+              Vr_sg(i,j)=fac2*(v(i,j,1,nrhs)+v_stokes(i,j,1))
+# else
               Ur_sg(i,j)=fac2*u(i,j,1,nrhs)
               Vr_sg(i,j)=fac2*v(i,j,1,nrhs)
+# endif
+!
               Zr(i,j)=sg_z1min
             END IF
 !
           END IF
 !
+!         Zr_wbl(i,j)=Zr(i,j)
 #endif
         END DO
       END DO
@@ -731,10 +793,13 @@
             ustrc_wbl(i,j)=ABS(m_ustrc)
             thck_wbl(i,j)=m_dwc
             cff=LOG( MAX( (thck_wbl(i,j)/ksd_wbl(i,j)),1.0_r8 ) )
-            udelta_wbl(i,j)=(ustrc_wbl(i,j)/vonKar)*cff
-# ifdef BEDLOAD_VANDERA_NOCURR
+!
+# ifdef BEDLOAD_VANDERA_ZEROCURR
             udelta_wbl(i,j)=0.0_r8
+# else
+            udelta_wbl(i,j)=(ustrc_wbl(i,j)/vonKar)*cff
 # endif
+!
 #endif
           END IF
         END DO
