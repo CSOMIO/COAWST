@@ -79,7 +79,7 @@
      &                OCEAN(ng) % zeta,                                 &
 #endif
 #if defined BEDLOAD_VANDERA_MADSEN
-!    &                SEDBED(ng) % Zr_wbl,                              &
+     &                SEDBED(ng) % Zr_wbl,                              &
      &                SEDBED(ng) % ksd_wbl,                             &
      &                SEDBED(ng) % ustrc_wbl,                           &
      &                SEDBED(ng) % thck_wbl,                            &
@@ -130,8 +130,7 @@
      &                      zeta,                                       &
 #endif
 #if defined BEDLOAD_VANDERA_MADSEN
-!    &                      Zr_wbl, ksd_wbl, ustrc_wbl,                 &
-     &                      ksd_wbl, ustrc_wbl,                         &
+     &                      Zr_wbl, ksd_wbl, ustrc_wbl,                 &
      &                      thck_wbl, udelta_wbl, fd_wbl,               &
 #endif
      &                      Iconv,                                      &
@@ -195,7 +194,7 @@
       real(r8), intent(in) :: zeta(LBi:,LBj:,:)
 # endif
 # if defined BEDLOAD_VANDERA_MADSEN
-!     real(r8), intent(inout) :: Zr_wbl(LBi:,LBj:)
+      real(r8), intent(inout) :: Zr_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: ksd_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: ustrc_wbl(LBi:,LBj:)
       real(r8), intent(inout) :: thck_wbl(LBi:,LBj:)
@@ -249,7 +248,7 @@
       real(r8), intent(in) :: zeta(LBi:UBi,LBj:UBj,3)
 # endif
 # if defined BEDLOAD_VANDERA_MADSEN
-!     real(r8), intent(inout) :: Zr_wbl(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: Zr_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: ksd_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: ustrc_wbl(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: thck_wbl(LBi:UBi,LBj:UBj)
@@ -470,7 +469,7 @@
 !
           END IF
 !
-!         Zr_wbl(i,j)=Zr(i,j)
+          Zr_wbl(i,j)=Zr(i,j)
 #endif
         END DO
       END DO
@@ -792,7 +791,7 @@
             ksd_wbl(i,j)=m_zoa
             ustrc_wbl(i,j)=ABS(m_ustrc)
             thck_wbl(i,j)=m_dwc
-            cff=LOG( MAX( (thck_wbl(i,j)/ksd_wbl(i,j)),1.0_r8 ) )
+            cff=LOG(MAX((thck_wbl(i,j)/ksd_wbl(i,j)),1.0_r8 ))
 !
 # ifdef BEDLOAD_VANDERA_ZEROCURR
             udelta_wbl(i,j)=0.0_r8

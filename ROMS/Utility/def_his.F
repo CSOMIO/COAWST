@@ -2130,7 +2130,6 @@
      &                   __FILE__)) RETURN
         END IF
 !
-!
 !  Above ground biomass
 !
         IF (Hout(idsagb,ng)) THEN
@@ -2772,7 +2771,9 @@
      &                   __FILE__)) RETURN
         END IF
 # endif
-# ifdef SEDIMENT
+!
+# ifdef SEDIMENT 
+! 
 #  ifdef BEDLOAD
 !
 !  Define Bedload U-direction.
@@ -2876,6 +2877,25 @@
      &                   __FILE__)) RETURN
         END IF
 !
+!  Reference height to get near bottom current velocity. 
+!
+        IF (Hout(idszrw,ng)) THEN
+          Vinfo( 1)=Vname(1,idszrw)
+          Vinfo( 2)=Vname(2,idszrw)
+          Vinfo( 3)=Vname(3,idszrw)
+          Vinfo(14)=Vname(4,idszrw)
+          Vinfo(16)=Vname(1,idszrw)
+#    if defined WRITE_WATER && defined MASKING
+          Vinfo(20)='mask_rho'
+#    endif
+          Vinfo(22)='coordinates'
+          Aval(5)=REAL(Iinfo(1,idszrw,ng),r8)
+          status=def_var(ng, iNLM, HIS(ng)%ncid, HIS(ng)%Vid(idszrw),   &
+     &                   NF_FOUT, nvd3, t2dgrd, Aval, Vinfo, ncname)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+!
 !  Bed roughness (Zo) for wave boundary layer calc.  
 !
         IF (Hout(idsksd,ng)) THEN
@@ -2914,7 +2934,6 @@
      &                   __FILE__)) RETURN
         END IF
 !
-!
 !  Current velocity at the wave boundary layer. 
 !
         IF (Hout(idsubl,ng)) THEN
@@ -2929,6 +2948,25 @@
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idsubl,ng),r8)
           status=def_var(ng, iNLM, HIS(ng)%ncid, HIS(ng)%Vid(idsubl),   &
+     &                   NF_FOUT, nvd3, t2dgrd, Aval, Vinfo, ncname)
+          IF (FoundError(exit_flag, NoError, __LINE__,                  &
+     &                   __FILE__)) RETURN
+        END IF
+!
+!  Angle between waves and currents. 
+!
+        IF (Hout(idspwc,ng)) THEN
+          Vinfo( 1)=Vname(1,idspwc)
+          Vinfo( 2)=Vname(2,idspwc)
+          Vinfo( 3)=Vname(3,idspwc)
+          Vinfo(14)=Vname(4,idspwc)
+          Vinfo(16)=Vname(1,idspwc)
+#    if defined WRITE_WATER && defined MASKING
+          Vinfo(20)='mask_rho'
+#    endif
+          Vinfo(22)='coordinates'
+          Aval(5)=REAL(Iinfo(1,idspwc,ng),r8)
+          status=def_var(ng, iNLM, HIS(ng)%ncid, HIS(ng)%Vid(idspwc),   &
      &                   NF_FOUT, nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (FoundError(exit_flag, NoError, __LINE__,                  &
      &                   __FILE__)) RETURN
@@ -5054,6 +5092,12 @@
           ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idsttr))) THEN
             got_var(idsttr)=.TRUE.
             HIS(ng)%Vid(idsttr)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idszrw))) THEN
+            got_var(idszrw)=.TRUE.
+            HIS(ng)%Vid(idszrw)=var_id(i)
+          ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idspwc))) THEN
+            got_var(idspwc)=.TRUE.
+            HIS(ng)%Vid(idspwc)=var_id(i)
 #endif
           END IF
 !
@@ -5601,6 +5645,22 @@
           exit_flag=3
           RETURN
         END IF
+
+
+        IF (.not.got_var(idszrw).and.Hout(idszrw,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idszrw)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+        IF (.not.got_var(idspwc).and.Hout(idspwc,ng)) THEN
+          IF (Master) WRITE (stdout,70) TRIM(Vname(1,idspwc)),          &
+     &                                  TRIM(ncname)
+          exit_flag=3
+          RETURN
+        END IF
+
+
 #endif
 #ifdef SOLVE3D
 # ifdef INWAVE_MODEL

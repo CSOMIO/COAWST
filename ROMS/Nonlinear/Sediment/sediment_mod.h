@@ -136,10 +136,12 @@
       integer :: idsurs                    ! Ursell number of the asymmetric wave
       integer :: idsrrw                    ! velocity skewness of the asymmetric wave 
       integer :: idsbtw                    ! acceleration asymmetry parameter
+      integer :: idszrw                    ! Reference height to get near bottom current velocity
       integer :: idsksd                    ! Bed roughness (zo) to calc. wave boundary layer 
       integer :: idsusc                    ! Current friction velocity at wave boundary layer 
       integer :: idstbl                    ! Thickness at wave boundary layer 
       integer :: idsubl                    ! Current velocity at wave boundary layer 
+      integer :: idspwc                    ! Angle between waves/currents 
       integer :: idsfdw                    ! Friction factor from the current cycle  
       integer :: idsucr                    ! Crest velocity of the asymmetric wave 
       integer :: idsutr                    ! Trough velocity of the asymmetric wave

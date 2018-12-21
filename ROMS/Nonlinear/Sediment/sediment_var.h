@@ -35,6 +35,8 @@
                 idsrrw=varid
               CASE ('idsbtw')
                 idsbtw=varid
+              CASE ('idszrw')
+                idszrw=varid
               CASE ('idsksd')
                 idsksd=varid
               CASE ('idsusc')
@@ -43,6 +45,8 @@
                 idstbl=varid
               CASE ('idsubl')
                 idsubl=varid
+              CASE ('idspwc')
+                idspwc=varid
               CASE ('idsfdw')
                 idsfdw=varid
               CASE ('idsucr')
