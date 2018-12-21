@@ -168,6 +168,7 @@
       USE mod_sediment
       USE mod_vandera_funcs
 !
+      USE bc_2d_mod, ONLY : bc_r2d_tile
       USE bc_3d_mod, ONLY : bc_r3d_tile
 # ifdef BEDLOAD
       USE exchange_2d_mod, ONLY : exchange_u2d_tile, exchange_v2d_tile
@@ -1089,6 +1090,45 @@
 !  Apply periodic or gradient boundary conditions to property arrays.
 !-----------------------------------------------------------------------
 !
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   ursell_no)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   RR_asymwave)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   beta_asymwave)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   ksd_wbl)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   ustrc_wbl)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   thck_wbl)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   udelta_wbl)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   phi_wc)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   fd_wbl)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   ucrest_r)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   utrough_r)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   T_crest)
+       CALL bc_r2d_tile (ng, tile,                                      &
+     &                   LBi, UBi, LBj, UBj,                            &
+     &                   T_trough)
       DO ised=1,NST
         CALL bc_r3d_tile (ng, tile,                                     &
      &                    LBi, UBi, LBj, UBj, 1, Nbed,                  &
@@ -1818,8 +1858,8 @@
       RETURN
       END SUBROUTINE skewness_params
 
-      SUBROUTINE abreu_points( r, phi, Uw, T, DTc, DTt,                 &
-     &                            DTcu, DTtu, umax, umin, RR, beta )
+      SUBROUTINE abreu_points( r, phi, Uw, T, T_c, T_t,                 &
+     &                            T_cu, T_tu, umax, umin, RR, beta )
 ! 
 !  Calculate umax, umin, and phases of asymmetrical wave orbital velocity 
 !
@@ -1835,7 +1875,7 @@
       implicit none
 !
       real(r8), intent(in)  :: r, phi, Uw, T
-      real(r8), intent(out) :: Dtc, DTt, DTcu, DTtu
+      real(r8), intent(out) :: T_c, T_t, T_cu, T_tu
       real(r8), intent(out) :: umax, umin, RR, beta
 !
 ! Local variables 
@@ -1843,7 +1883,7 @@
       real(r8) :: b, c, ratio, tmt, tmc, tzd, tzu
       real(r8) :: omega, w, phi_new
       real(r8) :: P, F0, betar_0
-      real(r8) :: T_tu, T_cu, T_c, T_t
+!     real(r8) :: T_tu, T_cu, T_c, T_t
       real(r8) :: cff1, cff2, cff
       real(r8) :: Sk, Ak
 !
@@ -1946,18 +1986,12 @@
       Ak=-3.0_r8*COS(phi_new)/cff
 !
 ! These are the dimensional fractions of wave periods needed by Van der A eqn.
-! TSK - Check source of these equations 
 !
       w=1.0_r8/omega
-      DTc=(tzd-tzu)*w
-      DTt=T-DTc
-      DTcu=(tmc-tzu)*w
-      DTtu=(tmt-tzd)*w
-!
-      T_tu=DTtu
-      T_cu=DTcu
-      T_c=DTc
-      T_t=DTt
+      T_c=(tzd-tzu)*w
+      T_t=T-T_c
+      T_cu=(tmc-tzu)*w
+      T_tu=(tmt-tzd)*w
 !
       RETURN
       END SUBROUTINE abreu_points

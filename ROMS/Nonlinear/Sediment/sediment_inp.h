@@ -862,6 +862,13 @@
                 RETURN
               END IF
               Npts=load_l(Nval, Cval, Ngrids, Hout(idsksd,:))
+            CASE ('Hout(idszrw)')
+              IF ((idszrw).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idszrw'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idszrw,:))
             CASE ('Hout(idsusc)')
               IF ((idsusc).eq.0) THEN
                IF (Master) WRITE (out,30) 'idsusc'
@@ -888,6 +895,13 @@
                 RETURN
               END IF
               Npts=load_l(Nval, Cval, Ngrids, Hout(idsubl,:))
+            CASE ('Hout(idspwc)')
+              IF ((idspwc).eq.0) THEN
+               IF (Master) WRITE (out,30) 'idspwc'
+                exit_flag=5
+                RETURN
+              END IF
+              Npts=load_l(Nval, Cval, Ngrids, Hout(idspwc,:))
             CASE ('Hout(idsfdw)')
               IF ((idsfdw).eq.0) THEN
                IF (Master) WRITE (out,30) 'idsfdw'

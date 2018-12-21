@@ -3845,6 +3845,29 @@
         END IF
       END IF 
 !
+!  Write out reference height to get near bottom current velocity.
+!
+      IF (Hout(idszrw,ng)) THEN
+        scale=1.0_r8
+        gtype=gfactor*r2dvar
+        status=nf_fwrite2d(ng, iNLM, HIS(ng)%ncid, HIS(ng)%Vid(idszrw), &
+     &                     HIS(ng)%Rindex, gtype,                       &
+     &                     LBi, UBi, LBj, UBj, scale,                   &
+#    ifdef MASKING
+     &                     GRID(ng) % rmask,                            &
+#    endif 
+     &                     SEDBED(ng) % Zr_wbl)
+        IF (FoundError(status, nf90_noerr, __LINE__,                    &
+     &                 __FILE__)) THEN
+          IF (Master) THEN
+            WRITE (stdout,10) TRIM(Vname(1,idszrw)), HIS(ng)%Rindex
+          END IF
+          exit_flag=3
+          ioerror=status
+          RETURN
+        END IF
+      END IF 
+!
 !  Write out bed roughness to get the current vel. at wave boundary layer.
 !
       IF (Hout(idsksd,ng)) THEN
@@ -3930,6 +3953,29 @@
      &                 __FILE__)) THEN
           IF (Master) THEN
             WRITE (stdout,10) TRIM(Vname(1,idsubl)), HIS(ng)%Rindex
+          END IF
+          exit_flag=3
+          ioerror=status
+          RETURN
+        END IF
+      END IF
+!
+!  Write out the angle between waves and currents. 
+!
+      IF (Hout(idspwc,ng)) THEN
+        scale=1.0_r8
+        gtype=gfactor*r2dvar
+        status=nf_fwrite2d(ng, iNLM, HIS(ng)%ncid, HIS(ng)%Vid(idspwc), &
+     &                     HIS(ng)%Rindex, gtype,                       &
+     &                     LBi, UBi, LBj, UBj, scale,                   &
+#    ifdef MASKING
+     &                     GRID(ng) % rmask,                            &
+#    endif 
+     &                     SEDBED(ng) % phi_wc)
+        IF (FoundError(status, nf90_noerr, __LINE__,                    &
+     &                 __FILE__)) THEN
+          IF (Master) THEN
+            WRITE (stdout,10) TRIM(Vname(1,idspwc)), HIS(ng)%Rindex
           END IF
           exit_flag=3
           ioerror=status

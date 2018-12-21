@@ -3653,6 +3653,15 @@
   'r2dvar'
   1.0d0
 
+'Zr_wbl'                                         ! Output
+  'Reference height to get near bottom current velocity.'
+  'meter-s'                                      ! [m/s]
+  'Zr_wbl, scalar, series' 
+  'ocean_time'
+  'idszrw'
+  'r2dvar'
+  1.0d0
+
 'ksd_wbl'                                         ! Output
   'Bed roughness (Zo) for wave boundary layer calc.' 
   'meter'                                         ! [m/s]
@@ -3686,6 +3695,15 @@
   'udelta_wbl, scalar, series' 
   'ocean_time'
   'idsubl'
+  'r2dvar'
+  1.0d0
+
+'phi_wc'                                          ! Output
+  'Angle between waves and currents' 
+  'radians'                                       ! [Non-dimensional]
+  'phi_wc, scalar, series' 
+  'ocean_time'
+  'idspwc'
   'r2dvar'
   1.0d0
 
