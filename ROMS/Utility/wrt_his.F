@@ -1,9 +1,9 @@
 #include "cppdefs.h"
       SUBROUTINE wrt_his (ng, tile)
 !
-!svn $Id: wrt_his.F 858 2017-07-31 23:02:30Z arango $
+!svn $Id: wrt_his.F 889 2018-02-10 03:32:52Z arango $
 !================================================== Hernan G. Arango ===
-!  Copyright (c) 2002-2018 The ROMS/TOMS Group                         !
+!  Copyright (c) 2002-2019 The ROMS/TOMS Group                         !
 !    Licensed under a MIT/X style license                              !
 !    See License_ROMS.txt                                              !
 !=======================================================================
@@ -1385,7 +1385,7 @@
 # endif
 !
 !  Write out density anomaly.
-!----------------------------
+!
       IF (Hout(idDano,ng)) THEN
         scale=1.0_r8
         gtype=gfactor*r3dvar
@@ -1646,8 +1646,8 @@
      &                       GRID(ng) % rmask_full,                     &
 #  endif
      &                       MIXING(ng) % ghats(:,:,:,i))
-        IF (FoundError(status, nf90_noerr, __LINE__,                    &
-     &                 __FILE__)) THEN
+          IF (FoundError(status, nf90_noerr, __LINE__,                  &
+     &                   __FILE__)) THEN
             IF (Master) THEN
               WRITE (stdout,10) TRIM(Vname(1,idGhat(i))), HIS(ng)%Rindex
             END IF
@@ -4179,7 +4179,6 @@
         END IF
       END DO
 # endif
-!
 # if defined SEDIMENT || defined BBL_MODEL
 !
 !  Write out exposed sediment layer properties.
@@ -4864,7 +4863,7 @@
 #endif
 #ifdef WAVES_DIR
 !
-!  Write out wind-induced wave direction.
+!  Write out wind-induced mean wave direction.
 !
       IF (Hout(idWdir,ng)) THEN
         scale=rad2deg
@@ -4880,6 +4879,31 @@
      &                 __FILE__)) THEN
           IF (Master) THEN
             WRITE (stdout,10) TRIM(Vname(1,idWdir)), HIS(ng)%Rindex
+          END IF
+          exit_flag=3
+          ioerror=status
+          RETURN
+        END IF
+      END IF
+#endif
+#ifdef WAVES_DIRP
+!
+!  Write out wind-induced peak wave direction.
+!
+      IF (Hout(idWdip,ng)) THEN
+        scale=rad2deg
+        gtype=gfactor*r2dvar
+        status=nf_fwrite2d(ng, iNLM, HIS(ng)%ncid, HIS(ng)%Vid(idWdip), &
+     &                     HIS(ng)%Rindex, gtype,                       &
+     &                     LBi, UBi, LBj, UBj, scale,                   &
+# ifdef MASKING
+     &                     GRID(ng) % rmask,                            &
+# endif
+     &                     FORCES(ng) % Dwavep)
+        IF (FoundError(status, nf90_noerr, __LINE__,                    &
+     &                 __FILE__)) THEN
+          IF (Master) THEN
+            WRITE (stdout,10) TRIM(Vname(1,idWdip)), HIS(ng)%Rindex
           END IF
           exit_flag=3
           ioerror=status
