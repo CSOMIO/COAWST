@@ -4,9 +4,9 @@
 
       SUBROUTINE bblm (ng, tile)
 !
-!svn $Id: ssw_bbl.h 854 2017-07-18 23:28:45Z arango $
+!svn $Id: ssw_bbl.h 900 2018-03-21 03:23:08Z arango $
 !================================================== Hernan G. Arango ===
-!  Copyright (c) 2002-2018 The ROMS/TOMS Group        Chris Sherwood   !
+!  Copyright (c) 2002-2019 The ROMS/TOMS Group        Chris Sherwood   !
 !    Licensed under a MIT/X style license               Rich Signell   !
 !    See License_ROMS.txt                             John C. Warner   !
 !=======================================================================
@@ -69,12 +69,12 @@
      &                OCEAN(ng) % vbar,                                 &
      &                OCEAN(ng) % u,                                    &
      &                OCEAN(ng) % v,                                    &
-#if defined BEDLOAD_VANDERA_STOKES 
+#if defined BEDLOAD_VANDERA_STOKES
      &                OCEAN(ng) % ubar_stokes,                          &
      &                OCEAN(ng) % vbar_stokes,                          &
      &                OCEAN(ng) % u_stokes,                             &
      &                OCEAN(ng) % v_stokes,                             &
-#endif 
+#endif
 #if defined SSW_CALC_UB
      &                OCEAN(ng) % zeta,                                 &
 #endif
@@ -349,10 +349,6 @@
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: zoBIO
 
 #include "set_bounds.h"
-
-!      m_zoa=1000000000.0_r8 
-!      m_dwc=0.0_r8 
-!      m_ustrr=0.0_r8
 !
 !-----------------------------------------------------------------------
 !  Set currents above the bed.
@@ -372,7 +368,6 @@
           Zr(i,j)=z_r(i,j,1)-z_w(i,j,0)
           Ur_sg(i,j)=u(i,j,1,nrhs)
           Vr_sg(i,j)=v(i,j,1,nrhs)
-
 #ifdef SSW_LOGINT
 !
 ! If chosen height is greater than the bottom cell thickness.
@@ -393,9 +388,9 @@
 # ifdef BEDLOAD_VANDERA_STOKES
                 Ur_sg(i,j)=fac1*( u(i,j,k-1,nrhs)+                      &
      &                            u_stokes(i,j,k-1) )+                  &
-     &                     fac2*( u(i,j,k,nrhs)+                        & 
+     &                     fac2*( u(i,j,k,nrhs)+                        &
      &                            u_stokes(i,j,k)   )
-                Vr_sg(i,j)=fac1*( v(i,j,k-1,nrhs)+                      &  
+                Vr_sg(i,j)=fac1*( v(i,j,k-1,nrhs)+                      &
      &                            v_stokes(i,j,k-1) )+                  &
      &                     fac2*( v(i,j,k,nrhs)+                        &
      &                            v_stokes(i,j,k)   )
@@ -403,7 +398,7 @@
                 Ur_sg(i,j)=fac1*u(i,j,k-1,nrhs)+fac2*u(i,j,k,nrhs)
                 Vr_sg(i,j)=fac1*v(i,j,k-1,nrhs)+fac2*v(i,j,k,nrhs)
 # endif
-! 
+!
                 Zr(i,j)=sg_z1min
               ENDIF
 !
@@ -418,7 +413,7 @@
 # else
                 Ur_sg(i,j)=ubar(i,j,nrhs)
                 Vr_sg(i,j)=vbar(i,j,nrhs)
-# endif 
+# endif
 !
                 Zr(i,j)=0.4_r8*z2
               END IF
@@ -429,9 +424,8 @@
             d50=bottom(i,j,isd50)
             z1=MAX( 2.5_r8*d50/30.0_r8, bottom(i,j,izapp) )
             z2=Zr(i,j)
-!            write(59,*),iic(ng),i,j,"z1",z1
 !
-            IF ( sg_z1min.lt.z1 ) THEN  
+            IF ( sg_z1min.lt.z1 ) THEN
 !
 ! If chosen height is less than the bottom roughness
 ! perform linear interpolation.
@@ -440,8 +434,8 @@
               fac=z1/z2
 !
 # ifdef BEDLOAD_VANDERA_STOKES
-              Ur_sg(i,j)=fac*(u(i,j,1,nrhs)+u_stokes(i,j,1))  
-              Vr_sg(i,j)=fac*(v(i,j,1,nrhs)+v_stokes(i,j,1))  
+              Ur_sg(i,j)=fac*(u(i,j,1,nrhs)+u_stokes(i,j,1))
+              Vr_sg(i,j)=fac*(v(i,j,1,nrhs)+v_stokes(i,j,1))
 # else
               Ur_sg(i,j)=fac*u(i,j,1,nrhs)
               Vr_sg(i,j)=fac*v(i,j,1,nrhs)
@@ -469,7 +463,9 @@
 !
           END IF
 !
+# if defined BEDLOAD_VANDERA_MADSEN
           Zr_wbl(i,j)=Zr(i,j)
+# endif
 #endif
         END DO
       END DO

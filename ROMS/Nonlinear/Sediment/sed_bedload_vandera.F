@@ -1335,12 +1335,12 @@
 !  T_c, T_t, T_cu, T_tu: Updated time periods in half cycles 
 !                        based on current velocity
 !**********************************************************************
-! 
+!
       USE mod_grid
       USE mod_kinds
       USE mod_scalars
-      USE mod_sediment 
-      USE mod_sedbed 
+      USE mod_sediment
+      USE mod_sedbed
       USE mod_vandera_funcs
 !
       implicit none
@@ -1351,7 +1351,7 @@
 !  
 ! Input the crest or trough half cycle velocity
 ! d50 -- grain size in meters
-! Different for crest and trough half cycles 
+! Different for crest and trough half cycles
 !       
       real(r8), intent(in) :: d50, d90, osmgd
       real(r8), intent(in) :: Td, depth
@@ -1360,7 +1360,7 @@
       real(r8), intent(in) :: umax, umin
       real(r8), intent(in) :: mag_bstrc
       real(r8), intent(inout) :: T_c, T_t, T_cu, T_tu
-      real(r8), intent(inout) :: udelta, delw, fd   
+      real(r8), intent(inout) :: udelta, delw, fd
       real(r8), intent(inout) :: alpha, eta, ksw, tau_wRe
 !
 !  Local variables
@@ -1371,27 +1371,27 @@
       real(r8), parameter :: eps=1.0E-14_r8
       real(r8), parameter :: crs_fac=1.0_r8
       real(r8) :: theta_timeavg_old, theta_timeavg, theta_hat_i
-      real(r8) :: k_wn 
+      real(r8) :: k_wn
       real(r8) :: psi  ! maximum mobility number
       real(r8) :: rlen ! ripple length
       real(r8) :: omega
-      real(r8) :: ksd, ustrc  
+      real(r8) :: ksd, ustrc
       real(r8) :: fw
       real(r8) :: alpha_w, fwd, c_w
       real(r8) :: ustarw
 !
 ! Iterative solution to obtain current and wave related bed roughness
-! VA2013 Apendix A, Shields parameter (Stress) depends on bed roughness 
+! VA2013 Apendix A, Shields parameter (Stress) depends on bed roughness
 ! Bed roughness computed from converged Shields parameter
 !
-! Maximum mobility number at crest and trough 
+! Maximum mobility number at crest and trough
 ! For irregular waves, use Rayleigh distributed maximum value
-! VA, text under equation Appendix B.4 
+! VA, text under equation Appendix B.4
 !
       psi=(1.27_r8*uhat)**2*osmgd
 !
-! Use Appendix B eqn B.1 and B.2 to get ripple height and length 
-!   
+! Use Appendix B eqn B.1 and B.2 to get ripple height and length
+!
       CALL ripple_dim(psi, d50, eta, rlen)
 !
       eta=eta*ahat
@@ -1404,33 +1404,33 @@
       theta_timeavg=0.0_r8
       theta_timeavg_old=0.0_r8
 !
-# if defined BEDLOAD_VANDERA_MADSEN 
+# if defined BEDLOAD_VANDERA_MADSEN
       fd=fd_calc_new(udelta, mag_bstrc)
 !
 #  ifdef BEDLOAD_VANDERA_ZEROCURR
       fd=0.0_r8
 #  endif
 !
-# endif 
+# endif
 !
       DO iter=1,total_iters
-! 
-! Calculate wave related bed roughness from VA2013 A.5     
-! 
+!
+! Calculate wave related bed roughness from VA2013 A.5
+!
         ksw=ksw_calc(d50, mu_calc(d50), theta_timeavg, eta, rlen)
 !
-! Calculate full-cycle wave friction factor VA2013 Appendix Eqn. A.4 
+! Calculate full-cycle wave friction factor VA2013 Appendix Eqn. A.4
 !
         fw=fw_calc(ahat, ksw)
 !
 ! Calculate Time-averaged absolute Shields stress VA2013 Appendix Eq. A.3
-! 
+!
 #if defined BEDLOAD_VANDERA_MADSEN
         theta_timeavg=osmgd*(0.5_r8*fd*udelta**2.0_r8+                  &
      &                       0.25_r8*fw*uhat**2.0_r8)
 #else
         theta_timeavg=osmgd*(mag_bstrc+0.25_r8*fw*uhat**2.0_r8)
-#endif 
+#endif
 !
         IF(ABS(theta_timeavg-theta_timeavg_old).lt.tol) THEN
           EXIT
@@ -1438,38 +1438,38 @@
         theta_timeavg_old=theta_timeavg
       END DO
 !
-#if ! defined BEDLOAD_VANDERA_MADSEN 
+#if ! defined BEDLOAD_VANDERA_MADSEN
 !
 ! Calculate full-cycle current friction factor from VA2013 Eqn. 20
-! 
+!
 !      fd=fd_calc(umag_curr, Zref, ksd)
-! 
+!
 ! Calculate current-related bed roughness from VA2013 Appendix A.1
-! dont need ksd if fd is directly computed from mag_bustrc 
+! dont need ksd if fd is directly computed from mag_bustrc
       ksd=ksd_calc(d50, d90, mu_calc(d50), theta_timeavg, eta, rlen)
 !
 ! This is commented now because we calculate current friction factor
-! from current-based shear stress 
-! udelta is the current velocity at the wave boundary layer 
-!      ustarw=0.5_r8*fw*uhat**2.0_r8 
+! from current-based shear stress
+! udelta is the current velocity at the wave boundary layer
+!      ustarw=0.5_r8*fw*uhat**2.0_r8
 !
       ustarw=SQRT(0.5_r8*fw*uhat**2.0_r8)
       delw=2.0_r8*von_k*ustarw/omega
 !
-      IF(thck_wbl_inp(ng).gt.0.0_r8) THEN 
+      IF(thck_wbl_inp(ng).gt.0.0_r8) THEN
         delw=thck_wbl_inp(ng)
-      ENDIF 
+      ENDIF
 !
 ! Can also hardwire delw
 ! Calculate the current velocity at a location at the height of wave boundary layer
 !
-      ustrc=SQRT(mag_bstrc)  ! ustarc 
-      IF(uhat.eq.0.0_r8) THEN 
+      ustrc=SQRT(mag_bstrc)  ! ustarc
+      IF(uhat.eq.0.0_r8) THEN
         udelta=0.05_r8
-      ELSE 
+      ELSE
         udelta=MAX( ((ustrc/von_k)*log(30.0*delw/ksd)), eps )
-      ENDIF 
-!       
+      ENDIF
+!
       fd=fd_calc_new(udelta, mag_bstrc)
 !
 #endif 
