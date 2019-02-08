@@ -91,8 +91,8 @@ GridsInLayer =  1 1
 ! Grid dimension parameters. See notes below in the Glossary for how to set
 ! these parameters correctly.
 
-          Lm == 82  114       ! Number of I-direction INTERIOR RHO-points
-          Mm == 62   84       ! Number of J-direction INTERIOR RHO-points
+          Lm == 85  114       ! Number of I-direction INTERIOR RHO-points
+          Mm == 63   84       ! Number of J-direction INTERIOR RHO-points
            N == 16   16       ! Number of vertical levels
           ND ==  0            ! Number of wave directional bins
 
@@ -335,7 +335,7 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 
    AKT_LIMIT == 1.0d-3 1.0d-3                   ! m2/s
 
-   AKV_LIMIT == 1.0d-3                          ! m2/s
+   AKV_LIMIT == 1.0d-3 1.0d-3                   ! m2/s
 
 ! Turbulent closure parameters.
 
@@ -395,8 +395,8 @@ LtracerSponge == F F                            ! temperature, salinity, inert
 ! Set vertical, terrain-following coordinates transformation equation and
 ! stretching function (see below for details), [1:Ngrids].
 
-  Vtransform == 1                          ! transformation equation
- Vstretching == 1                          ! stretching function
+  Vtransform == 2                          ! transformation equation
+ Vstretching == 4                          ! stretching function
 
 ! Vertical S-coordinates parameters (see below for details), [1:Ngrids].
 
@@ -463,7 +463,7 @@ LtracerSponge == F F                            ! temperature, salinity, inert
       Lm2CLM == F                          ! 2D momentum
       Lm3CLM == F                          ! 3D momentum
 
-  LtracerCLM == F F                        ! temperature, salinity, inert
+  LtracerCLM == T T T T                    ! temperature, salinity, inert
 
 ! Logical switches (TRUE/FALSE) to nudge the desired climatology field(s).
 ! If not analytical climatology fields, users need to turn ON the logical
@@ -473,7 +473,7 @@ LtracerSponge == F F                            ! temperature, salinity, inert
  LnudgeM2CLM == F                          ! 2D momentum
  LnudgeM3CLM == F                          ! 3D momentum
 
-  LnudgeTCLM == F F                        ! temperature, salinity, inert
+  LnudgeTCLM == T T T T                    ! temperature, salinity, inert
 
 ! Starting (DstrS) and ending (DendS) day for adjoint sensitivity forcing.
 ! DstrS must be less or equal to DendS. If both values are zero, their
@@ -612,6 +612,7 @@ Hout(idWamp) == T T     ! Hwave              wave height
 Hout(idWlen) == T T     ! Lwave              wave length-mean
 Hout(idWlep) == T T     ! Lwavep             wave length-peak
 Hout(idWdir) == T T     ! Dwave              wave direction
+Hout(idWdip) == T       ! Dwavep             wave direction-peak
 Hout(idWptp) == T T     ! Pwave_top          wave surface period
 Hout(idWpbt) == T T     ! Pwave_bot          wave bottom period
 Hout(idWorb) == T T     ! Uwave_rms          wave bottom orbital velocity
@@ -993,10 +994,16 @@ Dout(iTvdif) == F F     ! temp_vdiff, ...    vertical diffusion
 ! except the last one.
 
      NCLMFILES == 1                         ! number of climate files
-     CLMNAME == ocean_clm.nc
+     CLMNAME == Projects/Sandy/Sandy_clm.nc \
+                Projects/Sandy/Sandy_clm_ref3.nc
 
      NBCFILES == 1                          ! number of boundary files
-     BRYNAME == Projects/Sandy/Sandy_bdy.nc
+!    BRYNAME == Projects/Sandy/Sandy_bdy.nc
+     BRYNAME == Projects/Sandy/coawst_bdy_20121028.nc |
+                Projects/Sandy/coawst_bdy_20121029.nc |
+                Projects/Sandy/coawst_bdy_20121030.nc |
+                Projects/Sandy/coawst_bdy_20121031.nc |
+                Projects/Sandy/coawst_bdy_20121101.nc
 
 ! Input climatology nudging coefficients file name.
 
@@ -1029,7 +1036,8 @@ Dout(iTvdif) == F F     ! temp_vdiff, ...    vertical diffusion
 ! the last one.
 
      NFFILES == 1
-     FRCNAME == Projects/Sandy/romsforc_NARR_Sandy2012.nc
+     FRCNAME == Projects/Sandy/romsforc_NARR_Sandy2012.nc \
+                Projects/Sandy/romsforc_NARR_Sandy2012.nc
 
 ! Output NetCDF file names, [1:Ngrids].
 
