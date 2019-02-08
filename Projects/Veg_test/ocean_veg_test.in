@@ -601,6 +601,7 @@ Hout(idWamp) == T       ! Hwave              wave height
 Hout(idWlen) == T       ! Lwave              wave length-mean
 Hout(idWlep) == T       ! Lwavep             wave length-peak
 Hout(idWdir) == T       ! Dwave              wave direction
+Hout(idWdip) == T       ! Dwavep             wave direction-peak
 Hout(idWptp) == T       ! Pwave_top          wave surface period
 Hout(idWpbt) == T       ! Pwave_bot          wave bottom period
 Hout(idWorb) == T       ! Uwave_rms          wave bottom orbital velocity
@@ -1274,10 +1275,10 @@ Dout(iTvdif) == F F     ! temp_vdiff, ...    vertical diffusion
 
 ! InWave boundary conditions
 
-   LBC(isAC3d) Wave action density, [1:4, Ngrids] values are expected.
-   LBC(isCT3d) Wave theta celerity, [1:4, Ngrids] values are expected.
-   LBC(isCX3d) Wave x-dir celerity, [1:4, Ngrids] values are expected.
-   LBC(isCY3d) Wave y-dir celerity, [1:4, Ngrids] values are expected.
+!  LBC(isAC3d) Wave action density, [1:4, Ngrids] values are expected.
+!  LBC(isCT3d) Wave theta celerity, [1:4, Ngrids] values are expected.
+!  LBC(isCX3d) Wave x-dir celerity, [1:4, Ngrids] values are expected.
+!  LBC(isCY3d) Wave y-dir celerity, [1:4, Ngrids] values are expected.
 !
 ! Similarly, the adjoint-based algorithms (ADM, TLM, RPM) can have different
 ! lateral boundary conditions keywords:
