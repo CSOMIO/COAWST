@@ -600,7 +600,8 @@ Hout(idW3St) == T       ! w_stokes           3D W-Stokes velocity
 Hout(idWamp) == T       ! Hwave              wave height
 Hout(idWlen) == T       ! Lwave              wave length-mean
 Hout(idWlep) == T       ! Lwavep             wave length-peak
-Hout(idWdir) == T       ! Dwave              wave direction
+Hout(idWdir) == T       ! Dwave              wave direction-mean
+Hout(idWdip) == T       ! Dwavep             wave direction-peak
 Hout(idWptp) == T       ! Pwave_top          wave surface period
 Hout(idWpbt) == T       ! Pwave_bot          wave bottom period
 Hout(idWorb) == T       ! Uwave_rms          wave bottom orbital velocity
@@ -709,7 +710,8 @@ Qout(idV3Sd) == F       ! v_stokes           3D V-Stokes velocity
 
 Qout(idWamp) == F       ! Hwave              wave height
 Qout(idWlen) == F       ! Lwave              wave length
-Qout(idWdir) == F       ! Dwave              wave direction
+Qout(idWdir) == F       ! Dwave              wave direction-mean
+Qout(idWdip) == F       ! Dwavep             wave direction-peak
 Qout(idWptp) == F       ! Pwave_top          wave surface period
 Qout(idWpbt) == F       ! Pwave_bot          wave bottom period
 Qout(idWorb) == F       ! Ub_swan            wave bottom orbital velocity
