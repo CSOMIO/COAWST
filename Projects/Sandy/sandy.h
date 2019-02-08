@@ -45,7 +45,7 @@
 # undef SSW_BBL
 # ifdef SSW_BBL
 #  define SSW_CALC_ZNOT
-# /*define ANA_SEDIMENT*/
+#  define ANA_SEDIMENT
 # else
 #  define UV_LOGDRAG
 # endif
@@ -77,6 +77,7 @@
 # else
 #  define BULK_FLUXES
 # endif
+# define ANA_NUDGCOEF
 # define ATM_PRESS
 # define ANA_BTFLUX
 # define ANA_BSFLUX
@@ -89,7 +90,8 @@
 /* Turbulence closure */
 # define GLS_MIXING
 # undef  MY25_MIXING
-# define AKLIMIT
+# define LIMIT_VDIFF
+# define LIMIT_VVISC
 
 # if defined GLS_MIXING || defined MY25_MIXING
 #  define KANTHA_CLAYSON
