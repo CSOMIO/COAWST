@@ -1,7 +1,7 @@
 /*
 ** svn $Id: mct_roms_swan.h 830 2017-01-24 21:21:11Z arango $
 ***************************************************** John C. Warner ***
-** Copyright (c) 2002-2018 The ROMS/TOMS Group      Hernan G. Arango  **
+** Copyright (c) 2002-2019 The ROMS/TOMS Group      Hernan G. Arango  **
 **   Licensed under a MIT/X style license                             **
 **   See License_ROMS.txt                                             **
 ************************************************************************
@@ -340,6 +340,16 @@
       cid=cid+cad
 
       to_add=':DIRN'
+      cad=LEN_TRIM(to_add)
+      write(wostring(cid:cid+cad-1),'(a)') to_add(1:cad)
+      cid=cid+cad
+!
+      to_add=':DIREP'
+      cad=LEN_TRIM(to_add)
+      write(wostring(cid:cid+cad-1),'(a)') to_add(1:cad)
+      cid=cid+cad
+
+      to_add=':DIRNP'
       cad=LEN_TRIM(to_add)
       write(wostring(cid:cid+cad-1),'(a)') to_add(1:cad)
       cid=cid+cad
@@ -965,7 +975,8 @@
 !                                                                      !
 !  Fields imported from SWAN model:                                    !
 !                                                                      !
-!     * Wave direction (degrees), [radians]                            !
+!     * Mean wave direction (degrees), [radians]                       !
+!     * Peak wave direction (degrees), [radians]                       !
 !     * Significant wave height (m), [m]                               !
 !     * Average wave length (m), [m]                                   !
 !     * Surface wave relative peak period (s), [s]                     !
@@ -1369,7 +1380,7 @@
       END IF
 #endif
 !
-!  Wave direction (radians).
+!  Mean wave direction (radians).
 !
       CALL AttrVect_exportRAttr (AttrVect_G(ng)%wav2ocn_AV, "DIRE",     &
      &                           A, Asize)
@@ -1396,7 +1407,38 @@
       CALL mp_reduce (ng, iNLM, 2, range, op_handle)
 # endif
       IF (Myrank.eq.MyMaster) THEN
-        write(stdout,40) 'SWANtoROMS Min/Max DIR     (deg):   ',        &
+        write(stdout,40) 'SWANtoROMS Min/Max DIR     (rad):   ',        &
+     &                    range(1),range(2)
+      END IF
+!
+!  Peak wave direction (radians).
+!
+      CALL AttrVect_exportRAttr (AttrVect_G(ng)%wav2ocn_AV, "DIREP",    &
+     &                           A, Asize)
+      CALL AttrVect_exportRAttr (AttrVect_G(ng)%wav2ocn_AV, "DIRNP",    &
+     &                           A1, Asize)
+      range(1)= Large
+      range(2)=-Large
+      ij=0
+      DO j=JstrR,JendR
+        DO i=IstrR,IendR
+          ij=ij+1
+          cff=ATAN2(A(ij),A1(ij))
+          IF (cff.lt.0.0_r8) cff=cff+2.0_r8*pi
+          IF (iw.eq.1) THEN
+            FORCES(ng)%Dwavep(i,j)=cff
+          ELSE
+            FORCES(ng)%Dwavep(i,j)=FORCES(ng)%Dwavep(i,j)+cff
+          END IF
+          range(1)=MIN(range(1),cff)
+          range(2)=MAX(range(2),cff)
+        END DO
+      END DO
+# ifdef DISTRIBUTE
+      CALL mp_reduce (ng, iNLM, 2, range, op_handle)
+# endif
+      IF (Myrank.eq.MyMaster) THEN
+        write(stdout,40) 'SWANtoROMS Min/Max DIRP    (rad):   ',        &
      &                    range(1),range(2)
       END IF
 !
@@ -1621,6 +1663,9 @@
      &                        FORCES(ng)%Dwave)
       CALL exchange_r2d_tile (ng, tile,                                 &
      &                        LBi, UBi, LBj, UBj,                       &
+     &                        FORCES(ng)%Dwavep)
+      CALL exchange_r2d_tile (ng, tile,                                 &
+     &                        LBi, UBi, LBj, UBj,                       &
      &                        FORCES(ng)%Lwave)
 # ifdef WAVES_LENGTHP
       CALL exchange_r2d_tile (ng, tile,                                 &
@@ -1667,11 +1712,12 @@
      &                    EWperiodic(ng), NSperiodic(ng),               &
      &                    FORCES(ng)%Uwave_rms)
 # endif
-      CALL mp_exchange2d (ng, tile, iNLM, 2,                            &
+      CALL mp_exchange2d (ng, tile, iNLM, 3,                            &
      &                    LBi, UBi, LBj, UBj,                           &
      &                    NghostPoints,                                 &
      &                    EWperiodic(ng), NSperiodic(ng),               &
-     &                    FORCES(ng)%Dwave, FORCES(ng)%Lwave)
+     &                    FORCES(ng)%Dwave, FORCES(ng)%Dwavep,          &
+     &                    FORCES(ng)%Lwave)
 # ifdef WAVES_LENGTHP
       CALL mp_exchange2d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj,                           &
