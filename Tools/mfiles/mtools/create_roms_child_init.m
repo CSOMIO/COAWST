@@ -75,7 +75,12 @@ function create_roms_child_init(parent_grid,child_grid,parent_ini,child_ini)
 %5) Enter value of h, Lm, and Mm.
     h=ncread(child_grid,'h');
     hmin=min(min(h(:)));
-    hc=min([hmin,Tcline]);
+    if (Vtransform==1)
+      hmin=min(h(:));
+      hc=min(max(hmin,0),Tcline);
+    elseif (Vtransform==2)
+      hc=Tcline;
+    end
     [LP,MP]=size(h);
     L  = LP-1;
     M  = MP-1;
