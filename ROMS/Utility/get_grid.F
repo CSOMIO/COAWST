@@ -2,9 +2,9 @@
 #ifndef ANA_GRID
       SUBROUTINE get_grid (ng, model)
 !
-!svn $Id: get_grid.F 884 2017-12-06 01:59:26Z arango $
+!svn $Id: get_grid.F 927 2018-10-16 03:51:56Z arango $
 !================================================== Hernan G. Arango ===
-!  Copyright (c) 2002-2018 The ROMS/TOMS Group                         !
+!  Copyright (c) 2002-2019 The ROMS/TOMS Group                         !
 !    Licensed under a MIT/X style license                              !
 !    See License_ROMS.txt                                              !
 !=======================================================================
@@ -58,7 +58,7 @@
 #endif
       integer :: Vsize(4)
 
-      real(r8), parameter :: Fscl = 1.0_r8
+      real(dp), parameter :: Fscl = 1.0_dp
 
       real(r8) :: Fmax, Fmin
 
@@ -325,7 +325,7 @@
      &                        var_name(i), var_id(i),                   &
      &                        0, gtype, Vsize,                          &
      &                        LBi, UBi, LBj, UBj,                       &
-     &                        Fscl, hmin(ng), hmax(ng),                 &
+     &                        Fscl, Fmin, Fmax,                         &
 # ifdef MASKING
      &                        GRID(ng) % rmask,                         &
 # endif
@@ -336,6 +336,13 @@
               ioerror=status
               EXIT
             ELSE
+# ifdef SINGLE_PRECISION
+              Hmin(ng)=REAL(Fmin,dp)
+              Hmax(ng)=REAL(Fmax,dp)
+# else
+              Hmin(ng)=Fmin
+              Hmax(ng)=Fmax
+# endif
               IF (Master) THEN
                 WRITE (stdout,30) 'bathymetry at RHO-points: h',        &
      &                            ng, TRIM(ncname), hmin(ng), hmax(ng)
@@ -1957,7 +1964,7 @@
 !
 !  Open adjoint sensitivity NetCDF file for reading.
 !
-      IF (GotScope(4).and.(ADS(ng)%ncid.eq.-1)) THEN
+      IF (ADS(ng)%ncid.eq.-1) THEN
         CALL netcdf_open (ng, model, ncname, 0, ADS(ng)%ncid)
         IF (FoundError(exit_flag, NoError, __LINE__,                    &
      &                 __FILE__)) THEN

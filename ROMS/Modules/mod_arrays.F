@@ -1,9 +1,9 @@
 #include "cppdefs.h"
       SUBROUTINE mod_arrays (allocate_vars)
 !
-!svn $Id: mod_arrays.F 854 2017-07-18 23:28:45Z arango $
+!svn $Id: mod_arrays.F 923 2018-09-26 21:20:30Z arango $
 !================================================== Hernan G. Arango ===
-!  Copyright (c) 2002-2018 The ROMS/TOMS Group                         !
+!  Copyright (c) 2002-2019 The ROMS/TOMS Group                         !
 !    Licensed under a MIT/X style license                              !
 !    See License_ROMS.txt                                              !
 !=======================================================================
@@ -79,10 +79,11 @@
 !  Local variable declarations.
 !
       logical :: LallocateClima
-
+!
       integer :: ng, thread, tile
+      integer :: IminS, ImaxS, JminS, JmaxS
       integer :: LBi, UBi, LBj, UBj, LBij, UBij
-
+!
       integer, parameter :: model = 0
 
 #ifdef PROFILE
@@ -271,6 +272,6 @@
 !$OMP BARRIER
       END DO
 #endif
-
+!
       RETURN
       END SUBROUTINE mod_arrays

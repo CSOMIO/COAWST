@@ -2,9 +2,9 @@
       SUBROUTINE inquiry (ng, model, job, Iout, Irec, Mrec, ifield,     &
      &                    ncid, Lmulti, nfiles, S)
 !
-!svn $Id: inquiry.F 884 2017-12-06 01:59:26Z arango $
+!svn $Id: inquiry.F 927 2018-10-16 03:51:56Z arango $
 !================================================== Hernan G. Arango ===
-!  Copyright (c) 2002-2018 The ROMS/TOMS Group                         !
+!  Copyright (c) 2002-2019 The ROMS/TOMS Group                         !
 !    Licensed under a MIT/X style license                              !
 !    See License_ROMS.txt                                              !
 !=======================================================================
@@ -71,8 +71,8 @@
       integer :: i, ifile, lstr, my_ncid, nvatt, nvdim
       integer :: Vsize(4)
 
-      real(r8) :: Clength, Tend, Tmax, Tmin, Tmono, Tscale, Tstr, Tval
-      real(r8) :: scale
+      real(dp) :: Clength, Tend, Tmax, Tmin, Tmono, Tscale, Tstr, Tval
+      real(dp) :: scale
 
       character (len=1  ), parameter :: blank = ' '
       character (len=3  ) :: label
@@ -549,8 +549,8 @@
           ELSE
             Tmono=Tend
             Trec=Trec+1
-            CALL netcdf_get_fvar (ng, model, ncfile, Tname(ifield),     &
-     &                            Tval,                                 &
+            CALL netcdf_get_time (ng, model, ncfile, Tname(ifield),     &
+     &                            Rclock%DateNumber, Tval,              &
      &                            ncid = ncid,                          &
      &                            start = (/Trec-1/),                   &
      &                            total = (/1/))

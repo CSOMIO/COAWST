@@ -1,9 +1,9 @@
 !
 !  ROMS/TOMS IO NetCDF variables.
 !
-!svn $Id: varinfo.dat 830 2017-01-24 21:21:11Z arango $
+!svn $Id: varinfo.dat 889 2018-02-10 03:32:52Z arango $
 !========================================================= Hernan G. Arango ===
-!  Copyright (c) 2002-2018 The ROMS/TOMS Group                                !
+!  Copyright (c) 2002-2019 The ROMS/TOMS Group                                !
 !    Licensed under a MIT/X style license                                     !
 !    See License_ROMS.txt                                                     !
 !==============================================================================
@@ -2089,11 +2089,20 @@
   1.0d0
 
 'Dwave'                                            ! Input
-  'wind-induced wave direction'
+  'wind-induced wave direction - mean'
   'degrees'                                        ! [radians]
   'Dwave, scalar, series'
   'wave_time'
   'idWdir'
+  'r2dvar'
+  0.017453292519943295                             ! pi/180
+
+'Dwavep'                                           ! Input
+  'wind-induced wave direction -  peak'
+  'degrees'                                        ! [radians]
+  'Dwavep, scalar, series'
+  'wave_time'
+  'idWdip'
   'r2dvar'
   0.017453292519943295                             ! pi/180
 
