@@ -68,7 +68,7 @@
 
 ! C-preprocessing Flag.
 
-    MyAppCPP = SEDBED_TOY
+    MyAppCPP = SED_BED_TOY
 
 ! Input variable information file name.  This file needs to be processed
 ! first so all information arrays can be initialized properly.
@@ -956,7 +956,7 @@ Dout(iTvdif) == F F     ! temp_vdiff, ...    vertical diffusion
 ! Input NetCDF file names, [1:Ngrids].
 
      GRDNAME == ocean_grd.nc
-     ININAME == Projects/Sedbed_toy/restrat_mix_ini.nc
+     ININAME == Projects/Sed_bed_toy/restrat_mix_ini.nc
      ITLNAME == ocean_itl.nc
      IRPNAME == ocean_irp.nc
      IADNAME == ocean_iad.nc
@@ -1015,7 +1015,7 @@ Dout(iTvdif) == F F     ! temp_vdiff, ...    vertical diffusion
 
      NFFILES == 1                          ! number of unique forcing files
 
-     FRCNAME == Projects/Sedbed_toy/wind_restrat_2events.nc
+     FRCNAME == Projects/Sed_bed_toy/wind_restrat_2events.nc
 
 ! Output NetCDF file names, [1:Ngrids].
 
@@ -1039,7 +1039,7 @@ Dout(iTvdif) == F F     ! temp_vdiff, ...    vertical diffusion
      SPOSNAM =  ROMS/External/stations.in
      FPOSNAM =  ROMS/External/floats.in
      BPARNAM =  ROMS/External/bio_Fennel.in
-     SPARNAM =  Projects/Sedbed_toy/sediment_sedbed_toy.in
+     SPARNAM =  Projects/Sed_bed_toy/sediment_sed_bed_toy.in
      USRNAME =  ROMS/External/MyFile.dat
      VEGNAM  =  vegetation.in
 

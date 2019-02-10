@@ -240,7 +240,7 @@ ad_VolCons(north) ==  F                            ! northern boundary
         NRST == 3600
         NSTA == 600 
         NFLT == 1
-       NINFO == 3600 
+       NINFO == 10 !3600 
 
 ! Output history, quicksave, average, and diagnostic files parameters.
 
