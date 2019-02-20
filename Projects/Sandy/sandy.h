@@ -72,7 +72,7 @@
 # ifdef WRF_MODEL
 #  undef  BULK_FLUXES
 #  define ATM2OCN_FLUXES
-#  define ANA_SSFLUX
+#  undef  ANA_SSFLUX
 #  undef  LONGWAVE_OUT
 # else
 #  define BULK_FLUXES

@@ -18,7 +18,7 @@
 % This is the location of ww3 files downloaded and the
 % location of output for the forcing files to be created.
 %
-working_dir='F:\data\models\COAWST_tests\coawstv3.4_update\coawst_v3.4_tests\sandy\Projects\Sandy\ww3'
+working_dir='F:\data\models\COAWST\Projects\Sandy\ww3'
 
 % 2) Enter start dates of data requested.
 yearww3='2012';    %input year of data yyyy 
@@ -36,7 +36,7 @@ if long_run
 end
 
 % 3) Enter path\name of SWAN grid. This is set up to use the roms grid as the same for swan.
-modelgrid='F:\data\models\COAWST_tests\coawstv3.4_update\coawst_v3.4_tests\sandy\Projects\Sandy\Sandy_roms_grid.nc';
+modelgrid='F:\data\models\COAWST\Projects\Sandy\Sandy_roms_grid.nc';
 
 % 4) Enter the spacings of the forcing file locations around the perimeter
 % of the grid. One forcings file spans between the 'specres' points.
