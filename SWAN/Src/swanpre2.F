@@ -6604,8 +6604,8 @@
 !
 #ifdef SWAN_MODEL
   60  ALLOCATE(OPSDATZ_MOD(ng)%OPSTMP)                                    40.31
-      ALLOCATE(OPSDATZ_MOD(ng)%COPS)
-      ALLOCATE(OPSDATZ_MOD(ng)%FOPS)
+!     ALLOCATE(OPSDATZ_MOD(ng)%COPS)
+!     ALLOCATE(OPSDATZ_MOD(ng)%FOPS)
       OPSDATZ_MOD(ng)%OPSTMP%PSNAME = 'TESTPNTS'                          40.31
       OPSDATZ_MOD(ng)%OPSTMP%PSTYPE = 'P'                                 40.31
       OPSDATZ_MOD(ng)%OPSTMP%MIP    = NPTST                               40.31
