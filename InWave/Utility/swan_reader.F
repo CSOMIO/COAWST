@@ -140,7 +140,7 @@
       allocate(posang(ndirsw))
 
 !     If swan was run on a full circle or just a sector.
-      IF (INT(2.0_r8*pi/WAVES(ng)%dang).eq.ndirsw) THEN
+      IF (NINT(2.0_r8*pi/WAVES(ng)%dang).eq.ndirsw) THEN
         WAVES(ng)%Swancircle=1
       ELSE
         WAVES(ng)%Swancircle=0
