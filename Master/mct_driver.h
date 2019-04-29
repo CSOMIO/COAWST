@@ -520,12 +520,13 @@
 !
       logical :: stayin
       real(m8) :: r, m, n, p, gcd, dtA, dtB
+      scale=1000.0_m8
 !
 !-----------------------------------------------------------------------
 !  Compute greatest common denominator and least common multiplier.
 !-----------------------------------------------------------------------
-      dtA=dtAin
-      dtB=dtBin
+      dtA=dtAin*scale
+      dtB=dtBin*scale
       m=dtA
       n=dtB
       IF (dtA.gt.dtB) THEN
@@ -544,22 +545,7 @@
           dtA=r
         END IF
       END DO
-      gcdlcm=m*n/dtA
+      gcdlcm=m*n/dtA/scale
 
       RETURN
       END FUNCTION gcdlcm
-
-      !SUBROUTINE flush_coawst (unit)
-	  !-----------------------------------------------------------------------
-	  !
-	  !     USE mod_kinds
-	  !
-	  !      implicit none
-	  !
-	  !  Imported variable declarations.
-	  !
-	  !      integer, intent(in) :: unit
-	  !
-	  !      RETURN
-	  !      END SUBROUTINE flush_coawst
-
