@@ -519,7 +519,7 @@
 !  Local variable declarations.
 !
       logical :: stayin
-      real(m8) :: r, m, n, p, gcd, dtA, dtB
+      real(m8) :: r, m, n, p, gcd, dtA, dtB, scale
       scale=1000.0_m8
 !
 !-----------------------------------------------------------------------
