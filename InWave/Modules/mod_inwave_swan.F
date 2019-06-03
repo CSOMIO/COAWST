@@ -24,6 +24,7 @@
 !  DDIR        Directional interval for the directions array           !
 !  FP          Peak frequency                                          !
 !  MAINANG     Short waves main propagation angle                      !
+!  MAINANGI    Short waves main propagation angle index                !
 !  HM0GEW      Significant wave height computed from the               !
 !              interpolated spectra                                    !
 !  DANG        
@@ -82,7 +83,7 @@
 
         TYPE SHORT_WAVE
 
-         integer             :: ndir,nfreq
+         integer             :: ndir,nfreq, mainangi
          integer             :: ndirsw,nfreqsw
          integer             :: Insteps, Swancircle
          real(r8)            :: dur,dt
@@ -372,7 +373,7 @@
 !
       IF (first.eq.1) THEN
         WAVES(ng)%nfreq=1000 ! because Mai wanted it that way.
-        WAVES(ng)%fnyq=3.0_r8*WAVES(ng)%fp
+!       WAVES(ng)%fnyq=3.0_r8*WAVES(ng)%fp
 !       WAVES(ng)%fmax=WAVES(ng)%fnyq
 !       WAVES(ng)%df=(WAVES(ng)%fmax-WAVES(ng)%fmin)/                   &
 !   &                REAL((WAVES(ng)%nfreq-1),r8)
@@ -519,12 +520,14 @@
 !  The Ampzeta time series will repeat every 1/df time steps.
 !
         WAVES(ng)%dur=1./WAVES(ng)%df
-        WAVES(ng)%Insteps=nint(WAVES(ng)%dur/dt(ng))
+!  Force the number of steps to be 2000 to Hilbert.
+!       WAVES(ng)%Insteps=nint(WAVES(ng)%dur/dt(ng))
+        WAVES(ng)%Insteps=nint(WAVES(ng)%dur/1.0_r8)
 !
 !  Allocate and init the computational arrays.
 !
         allocate(WAVES(ng)%CompFn(WAVES(ng)%Insteps))
-        allocate(WAVES(ng)%zeta(WAVES(ng)%Insteps,WAVES(ng)%ndir))
+!        allocate(WAVES(ng)%zeta(WAVES(ng)%Insteps,WAVES(ng)%ndir))
         allocate(WAVES(ng)%Ampzeta(WAVES(ng)%Insteps,WAVES(ng)%ndir))
         allocate(WAVES(ng)%Ampzeta_tot(WAVES(ng)%Insteps))
         allocate(WAVES(ng)%bndwave(WAVES(ng)%Insteps))
@@ -540,7 +543,7 @@
 !
       DO j=1,WAVES(ng)%ndir
         DO i=1,WAVES(ng)%Insteps
-          WAVES(ng)%zeta(i,j)=0.0_r8
+!          WAVES(ng)%zeta(i,j)=0.0_r8
           WAVES(ng)%Ampzeta(i,j)=0.0_r8
         END DO
       END DO
