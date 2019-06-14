@@ -512,7 +512,7 @@
      &                              d50, d50_mix, rhos, c_w,            &
      &                              eta, dsf_c,                         &
      &                              T_crest(i,j), T_cu, uhat_c,         &
-     &                              mag_theta_c, om_cc, om_tc )
+     &                              mag_theta_c, om_cc, om_ct )
 !
 !-----------------------------------------------------------------------
 ! 2. Bed shear stress (Shields parameter) for Trough half cycle 
@@ -537,7 +537,7 @@
      &                              d50, d50_mix, rhos, c_w,            &
      &                              eta, dsf_t,                         &
      &                              T_trough(i,j), T_tu, uhat_t,        &
-     &                              mag_theta_t, om_tt, om_ct )
+     &                              mag_theta_t, om_tt, om_tc )
 !
 !-----------------------------------------------------------------------
 ! 3. Compute sediment load entrained during each trough half cycle
