@@ -305,9 +305,9 @@
       DO dir_index=1,ND
         DO i=1,WAVES(ng)%Insteps
           WAVES(ng)%Ampzeta(i,dir_index)=0.5_r8*g*rho0*                 &
-     &                                   (WAVES(ng)%Ampzeta_tot(i)*     &
+     &                          (WAVES(ng)%Ampzeta_tot(i)**2.0_r8)*     &
      &                                   WAVES(ng)%SDD(dir_index)/      &
-     &                                   WAVES(ng)%int)**2.0_r8
+     &                                   WAVES(ng)%int
           zeta_filt(i)=WAVES(ng)%Ampzeta(i,dir_index)
         ENDDO
 ! do a filter on ampzeta
