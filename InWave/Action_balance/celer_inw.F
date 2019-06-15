@@ -175,7 +175,7 @@
       real(r8) :: alfa_wave, kh, wa, wr
       real(r8) :: theta_cur
       real(r8) :: cff1
-      real(r8) :: dir_edge
+      real(r8) :: dir_edge, hx, hy
       real(r8) :: G1, cr, cgr, cgrx, cgry
       real(r8) :: dudx, dudy, dvdx, dvdy, dhdx, dhdy
       real(r8) :: cff, cosde, sinde
@@ -282,11 +282,14 @@
               ct_r(i,j,d)=0.0_r8
             ELSE
 
-!  Note: change in angle convention to solve blah blah blah.
+!  Note: change in angle convention
 
               dir_edge=-(wd(d)-halfpi)
-              dhdx=(pm(i+1,j)+pm(i,j))*(h_tot(i+1,j)-h_tot(i-1,j))
-              dhdy=(pn(i,j+1)+pn(i,j))*(h_tot(i,j+1)-h_tot(i,j-1))
+              hx=(h_tot(i+1,j)-h_tot(i-1,j))*(pm(i,j)+pm(i-1,j))
+              hy=(h_tot(i,j+1)-h_tot(i,j-1))*(pn(i,j)+pn(i,j-1))
+              dhdx=hx*cos(angler(i,j))-hy*sin(angler(i,j))
+              dhdy=hx*sin(angler(i,j))+hy*cos(angler(i,j))
+!all down here
               kh=MIN(kwc(i,j,d)*h_tot(i,j),kDmax)
               ct_r(i,j,d)=twopi/(MAX(Tamin,Tr(i,j,d))*sinh(2.0_r8*kh))* &
      &                   (sin(dir_edge)*dhdx-cos(dir_edge)*dhdy)
