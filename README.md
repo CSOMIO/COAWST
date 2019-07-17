@@ -42,7 +42,7 @@ Instructions for setting up and using git/github to maintain code and collaborat
         3. push the changes to github so they aren't only on your computer and so that you can share them: `git push`
             1. If this is the first time you are pushing your branch, it will pop up and tell you what to do
     5. From your github repo branch, others can work on the code too
-        1. SHOULD PEOPLE FORK YOUR BRANCH FROM YOUR REPO OR CSOMIO REPO?
+        1. You can push your branch to CSOMIO/COAWST so that others can work on the same branch if that makes sense. I think this will still require a pull request, but we can work out the details.
     6. If your code is completed, or at a stage where it won't break your master code (be sure of this), merge it with your master branch:
         1. `git checkout master`
         2. `git merge <branchname>`
