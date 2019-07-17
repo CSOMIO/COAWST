@@ -12,6 +12,8 @@ Notes:
 
 Common github commands for reference:
 * `git status`: check what has been added, changed, what branch you are on
+* `git pull`: get changes
+* `git push`: share changes
 
 
 More information about git: https://www.smashwords.com/books/view/498426
