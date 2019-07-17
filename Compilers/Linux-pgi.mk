@@ -56,7 +56,7 @@ endif
 # The user may want to uncomment this option to allow similar,
 # if not identical solutions between different of the PGI compiler.
 
-#          FFLAGS += -Kieee
+          FFLAGS += -Kieee
 
 #
 # Library locations, can be overridden by environment variables.
@@ -68,9 +68,14 @@ ifdef USE_NETCDF4
              LIBS := $(shell $(NF_CONFIG) --flibs)
 #            LIBS += -L$(HDF5_LIBDIR) -lhdf5_hl -lhdf5 -lz
 else
-   NETCDF_INCDIR ?= /opt/pgisoft/netcdf/include
-   NETCDF_LIBDIR ?= /opt/pgisoft/netcdf/lib
-            LIBS := -L$(NETCDF_LIBDIR) -lnetcdf -lnetcdff -L/opt/mx/lib64 -lcurl -lgssapi_krb5
+#   NETCDF_INCDIR ?= /opt/pgisoft/netcdf/include
+#   NETCDF_LIBDIR ?= /opt/pgisoft/netcdf/lib
+#   CKHARRIS Changed these next lines
+
+   NETCDF_INCDIR ?= /usr/vimssw/pgi/netcdf-fortran-4.2/include
+   NETCDF_LIBDIR ?= /usr/vimssw/pgi/netcdf-fortran-4.2/lib
+   #LIBS := -L$(NETCDF_LIBDIR) -lnetcdf -lnetcdff -L/opt/mx/lib64 -lcurl -lgssapi_krb5
+   LIBS := -L$(NETCDF_LIBDIR) -L$(NETCDF)/lib -lnetcdf -lnetcdff
             LIBS += $(shell nc-config --libs)
 endif
 
@@ -112,7 +117,8 @@ ifdef USE_DEBUG
          CXXFLAGS += -g
 else
 #          FFLAGS += -u -Bstatic -fastsse -Mipa=fast -tp k8-64
-           FFLAGS += -fastsse -Mipa=fast -tp k8-64
+#           FFLAGS += -fastsse -Mipa=fast -tp k8-64
+           FFLAGS += -O3
            CFLAGS += -O3
          CXXFLAGS += -O3
 endif
