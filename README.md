@@ -11,8 +11,11 @@ Notes:
 * you'll want to stay up to date with the CSOMIO/COAWST master branch so that you don't have a harder time merging the code later and having to potentially change some of your own implementation.
 
 Common github commands for reference:
-`git status`: check your
+* `git status`: check what has been added, changed, what branch you are on
+* more
 
+
+More information about git: https://www.smashwords.com/books/view/498426
 
 Instructions for setting up and using git/github to maintain code and collaborate:
 1. Get a github account of your own.
