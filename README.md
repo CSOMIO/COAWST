@@ -22,7 +22,7 @@ Instructions for setting up and using git/github to maintain code and collaborat
     1. on page https://github.com/CSOMIO/COAWST, click "fork" in upper right hand
     2. I clicked "fork to...  kthyng/COAWST", since kthyng is my own github user account
 3. Clone the COAWST repo from your github account to your computer
-    1. Click the green "clone or download" button on https://github.com/kthyng/COAWST (but with your github profile name instead of kthyng) and copy the link to clipboard
+    1. Click the green "clone or download" button on https://github.com/<username>/COAWST (but with your github profile name in there) and copy the link to clipboard
     2. On your computer, open terminal window and navigate to where you want to clone repo and type `git clone https://github.com/<username>/COAWST.git` but with <username> as your github username. This will bring all of the COAWST repo to the clone location, and call the directory "COAWST"
 4. Do your work on COAWST on your own computer and keep it version controlled with your github profile and with a branch; don't work on the master branch directly.
     1. Set up a remote to the group CSOMIO/COAWST repo. This will allow you to get new code when someone else has put in their part.
