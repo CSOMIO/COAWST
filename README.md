@@ -26,12 +26,12 @@ Instructions for setting up and using git/github to maintain code and collaborat
 3. Clone the COAWST repo from your github account to your computer
     1. Click the green "clone or download" button on https://github.com/<username>/COAWST (but with your github profile name in there) and copy the link to clipboard
     2. On your computer, open terminal window and navigate to where you want to clone repo and type `git clone https://github.com/<username>/COAWST.git` but with <username> as your github username. This will bring all of the COAWST repo to the clone location, and call the directory "COAWST"
-4. Do your work on COAWST on your own computer and keep it version controlled with your github profile and with a branch; don't work on the master branch directly.
-    1. Set up a remote to the group CSOMIO/COAWST repo. This will allow you to get new code when someone else has put in their part.
+4. Do your work on COAWST on your own computer(s) and keep it version controlled with your github profile and with a branch; don't work on the master branch directly.
+    1. Set up a remote to the group CSOMIO/COAWST repo. This will allow you to get new code when someone else has put in their part or other changes have been made.
         1. `git remote add upstream https://github.com/CSOMIO/COAWST.git`
         2. You can check your remotes with `git remote -v`
-            1. This shows you the github repos that you are connected with. You will have "origin", which points to your fork of COAWST on github, and "upstream" which points to the original group COAWST.
-        3. You can later get this new code from CSOMIO/COAWST with `git pull upstream master`. You may have to merge the code with your code. Google for an example for how to merge, it's not that hard actually, but you have to go through by hand if git can't figure out how to do it all automatically (that is, if you made edits to the same place someone else did).
+            1. This shows you the github repos that you are connected with. You will have "origin", which points to your fork of COAWST on github, and "upstream" which points to the original group CSOMIO/COAWST.
+        3. You can later get updates from CSOMIO/COAWST with `git pull upstream master`. You may have to merge the code with your code. Google for an example for how to merge. It's not hard generally, but you have to go through by hand if git can't figure out how to do it all automatically (that is, if you made edits to the same place someone else did).
     2. Make a new branch in your version of COAWST in the terminal window with `git branch <branchname>`
     3. Work in your branch by checking out the branch: `git checkout <branchname>`
         1. You can always check which branch you are in and what has been changed with `git status`
@@ -42,8 +42,9 @@ Instructions for setting up and using git/github to maintain code and collaborat
             1. the better your commit message is, the more everyone will like you
         3. push the changes to github so they aren't only on your computer and so that you can share them: `git push`
             1. If this is the first time you are pushing your branch, it will pop up and tell you what to do
-    5. From your github repo branch, others can work on the code too
-        1. You can push your branch to CSOMIO/COAWST so that others can work on the same branch if that makes sense. I think this will still require a pull request, but we can work out the details.
+    5. If others want to work on your branched code too:
+        1. I think the easiest and cleanest way to do this is to set up the other person's branch (on otheir github profile) as a remote so that you can pull their branch to be a branch in your profile (will update this when tested).
+        1. Then you can work back and forth on this branch to finish the work before merging it.
     6. If your code is completed, or at a stage where it won't break your master code (be sure of this), merge it with your master branch:
         1. `git checkout master`
         2. `git merge <branchname>`
